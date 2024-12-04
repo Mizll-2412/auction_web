@@ -1,0 +1,184 @@
+.product-container {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+.product-container a{
+    text-decoration: none;
+}
+.product-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.product-item:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.product-image {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin-right: 15px;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.save-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #fff;
+    padding: 3px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #1a73e8;
+    text-decoration: none;
+}
+
+.description-info{
+    margin: 0 0 4px 0;
+}
+.description{
+    color: #d0021b;
+}
+
+.seller {
+    display: block; 
+    color: #666;
+    font-size: 14px;
+}
+
+.product-meta {
+    margin-top: 10px; /* Adds a bit of space between the product meta and description */
+}
+
+.no-products {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #fe0808;
+}
+
+.product-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.id-like {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-id {
+    color: #666;
+}
+
+.like-count {
+    display: flex;
+    align-items: center;
+    color: #666;
+}
+
+.price {
+    color: #d0021b;
+    font-weight: bold;
+}
+.product-actions {
+    margin-top: 10px;
+}
+
+.product-actions .btn-edit,
+.product-actions .btn-delete,
+.add-product .btn-add {
+    display: inline-block;
+    padding: 10px 20px; /* Tăng kích thước nút */
+    margin-right: 15px;
+    font-size: 14px;
+    font-weight: bold; /* Làm chữ đậm để nổi bật */
+    border-radius: 5px;
+    color: white;
+    background-color: #007bff; /* Màu xanh lam cho nút sửa */
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.product-actions .btn-edit:hover,
+.product-actions .btn-delete:hover,
+.add-product .btn-add:hover {
+    background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+    transform: scale(1.05); /* Hiệu ứng phóng to khi hover */
+}
+
+/* Nút sửa */
+.product-actions .btn-edit {
+    background-color: #ffc107; /* Màu vàng cho nút sửa */
+}
+
+.product-actions .btn-edit:hover {
+    background-color: #e0a800; /* Màu vàng đậm hơn khi hover */
+}
+
+/* Nút xóa */
+.product-actions .btn-delete {
+    background-color: #dc3545; /* Màu đỏ cho nút xóa */
+}
+
+.product-actions .btn-delete:hover {
+    background-color: #c82333; /* Màu đỏ đậm hơn khi hover */
+}
+
+.add-product {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.add-product .btn-add {
+    background-color: #28a745; /* Màu xanh lá cho nút thêm sản phẩm */
+    font-size: 16px;
+    padding: 12px 25px;
+    text-decoration: none;
+}
+
+.add-product .btn-add:hover {
+    background-color: #218838; /* Màu xanh lá đậm khi hover */
+}
+
+@media (max-width: 600px) {
+    .product-item {
+        flex-direction: column;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 200px;
+        margin-bottom: 10px;
+    }
+    
+    /* Điều chỉnh cho nút sửa và xóa trên màn hình nhỏ */
+    .product-actions .btn-edit,
+    .product-actions .btn-delete {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

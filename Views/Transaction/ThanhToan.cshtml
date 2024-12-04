@@ -1,0 +1,86 @@
+@model BTL_LTWNC.Models.TblTransaction
+
+@{
+    ViewData["Title"] = "Thanh toán";
+    var isLoggedIn = !string.IsNullOrEmpty(@ViewBag.FullName);
+}
+<link rel="stylesheet" href="~/css/thanhtoan.css" asp-append-version="true" />
+
+<div class="form-container">
+    <h2>Thanh Toán</h2>
+
+    @* Thông tin sản phẩm *@
+    <div class="form-container">
+        <div class="row">
+            <h4>Thông tin sản phẩm</h4>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-12 col-md-4 mb-3">
+                <strong>Hình ảnh</strong>
+            </div>
+            <div class="col-12 col-md-4 mb-3">
+                <strong>Tên sản phẩm</strong>
+            </div>
+            <div class="col-12 col-md-4 mb-3">
+                <strong>Giá</strong>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- First column: Product Image -->
+            <div class="col-12 col-md-4 mb-3">
+                @if (ViewBag.Product?.SImageUrl != null)
+                {
+                    <img src="@ViewBag.Product.SImageUrl" alt="@ViewBag.Product.SProductName"
+                        class="img-fluid product-image" />
+                }
+                else
+                {
+                    <p>Hình ảnh</p>
+                }
+            </div>
+
+            <!-- Second column: Product Name -->
+            <div class="col-12 col-md-4 mb-3">
+                <span>@(ViewBag.Product?.SProductName ?? "Tên sản phẩm không có")</span>
+            </div>
+
+            <!-- Third column: Price -->
+            <div class="col-12 col-md-4 mb-3">
+                <span>@(ViewBag.Product?.SProductName ?? "Tên sản phẩm không có")</span>
+            </div>
+        </div>
+    </div>
+
+    @* Thông tin khách hàng *@
+    <div class="form-container">
+        <h4>Thông tin khách hàng</h4>
+        <table class="table">
+            <tr>
+                <td style="width: 33%;"><label class="form-label">Tên khách hàng:</label></td>
+                <td style="width: 67%;"><span>@ViewBag.FullName</span></td>
+            </tr>
+            <tr>
+                <td style="width: 33%;"><label class="form-label">Email:</label></td>
+                <td style="width: 67%;"><span>@ViewBag.Email</span></td>
+            </tr>
+            <tr>
+                <td style="width: 33%;"><label class="form-label">Số điện thoại:</label></td>
+                <td style="width: 67%;"><span>@ViewBag.PhoneNumber</span></td>
+            </tr>
+        </table>
+
+        <div class="mb-3">
+            <label for="address" class="form-label">Địa Chỉ</label>
+            <input type="text" id="address" class="form-control" placeholder="Nhập địa chỉ" />
+            <span id="addressError" class="text-danger" style="margin-top: 10px; display: block;"></span>
+        </div>
+    </div>
+
+    @* button *@
+    <div class="d-flex justify-content-end" style="margin-top: 30px;">
+        <button type="button" id="confirmButton" class="btn btn-success btn-lg">Xác Nhận</button>
+        <button type="button" class="btn btn-secondary btn-lg" onclick="window.history.back();">Quay Lại</button>
+    </div>
+</div>

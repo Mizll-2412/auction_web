@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+/* Content */
+.content-container {
+    margin-top: 100px;
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background for better readability */
+    border: 1px solid #ddd; /* Optional: Border around the container */
+    border-radius: 8px; /* Rounded corners */
+}
+
+.content-container .content-table {
+    width: 100%;
+    border-collapse: collapse; /* Avoid double borders */
+    margin-top: 20px; /* Space between table and content above */
+}
+
+.content-container th, 
+.content-container td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Add borders for better distinction */
+}
+
+.content-container th.center-text, 
+.content-container td.center-text {
+    text-align: center; /* Center-align specific table cells */
+}
+
+.content-container td img {
+    width: 100px;
+    height: auto; /* Maintain aspect ratio */
+    border: 1px solid #ccc; /* Optional: Light border around images */
+    display: block; /* Ensures proper image alignment */
+    margin: auto; /* Center image in the cell */
+    border-radius: 4px; /* Rounded image corners */
+}
+
+.content-container .content-table tbody tr:hover {
+    background-color: #f1f1f1; /* Highlight row on hover */
+}
+
+button.btn {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+button.btn-danger:hover {
+    background-color: #c82333;
+}
+
+button.btn-success {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+}
+
+button.btn-success:hover {
+    background-color: #218838;
+}

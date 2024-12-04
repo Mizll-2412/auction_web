@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BTL_LTWNC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BTL_LTWNC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha384-DyZv0Z+F9gG12L7pSc9g3Rnl1/Jx6ByG6Z3t8c+2D67PZ5h5Bx4Bd1WcB1C5gL4a" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* CSS cho header cố định */
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            height: 65px;
+            width: 100%;
+            z-index: 1000;
+            top: 0;
+            position: fixed;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar .navbar-brand {
+            font-weight: bold;
+            color: white;
+            font-size: 30px;
+            margin-left: 20px;
+            /* Khoảng cách bên trái */
+            margin-top: 30px;
+            padding-top: 30px;
+        }
+
+        .navbar .header .navbar-brand {
+            padding: 30px;
+            position: relative;
+            top: 40px;
+
+        }
+
+        .navbar .nav-link {
+            color: white !important;
+            margin-left: 10px;
+            /* Thêm khoảng cách bên trái cho các liên kết */
+
+        }
+
+        .navbar .nav-link:hover {
+            color: #cce7ff !important;
+        }
+
+        body {
+            padding-top: 80px;
+            /* Cách giữa nội dung với header */
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+            /* Đẩy các liên kết sang bên phải */
+            margin-right: 40px;
+            margin-bottom: 50px;
+        }
+
+        .header {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    @* Lấy tên người dùng từ session *@
+    @{
+        var userName = Context.Session.GetString("FullName");
+    }
+
+    @* Kiểm tra xem trang có phải là Đăng nhập hoặc Đăng ký không *@
+    @if (!(ViewData["Title"]?.ToString() == "Đăng nhập" || ViewData["Title"]?.ToString() == "Đăng ký"))
+    {
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="header">
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">Đấu Giá HOU</a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        @if (string.IsNullOrEmpty(userName))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">Trang Chủ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">Trang Chủ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="User" asp-action="Index">Xin chào, @userName</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Logout" method="post">Đăng xuất</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    }
+    
+
+    <div class="header">
+        @RenderBody()
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="company-info">
+                <h2>CÔNG TY ĐẤU GIÁ HOU</h2>
+                <div class="contact-details">
+                    <p><i class="fas fa-location-dot"></i> 96 Định Công, Hoàng Mai, Hà Nội</p>
+                    <p><i class="fas fa-phone"></i> 03xx.xxx.xxx</p>
+                    <p><i class="fas fa-mobile-alt"></i> 09xx.xxx.xxx</p>
+                    <p><i class="fas fa-envelope"></i> fakeemail@gmail.com</p>
+                </div>
+                <div class="registration-info">
+                    <p><i class="fas fa-file-alt"></i> Giấy đăng ký hoạt động số: 47/TP-ĐKHĐ</p>
+                    <p><i class="fas fa-calendar-alt"></i> Ngày cấp: 24-12-2022</p>
+                    <p><i class="fas fa-building"></i> Nơi cấp: Sở Tư Pháp thành phố Hà Nội</p>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h2>Trợ giúp người đấu giá</h2>
+                <ul>
+                    <li>Đăng ký tham gia tài khoản đấu giá</li>
+                    <li>Hướng dẫn chi tiết về đấu giá</li>
+                    <li>Quy định về đấu giá trực tuyến</li>
+                    <li>Chính sách bảo mật</li>
+                    <li>Quy chế hoạt động</li>
+                </ul>
+            </div>
+
+            <div class="footer-bottom">
+                <p>Quyết định số 647/QĐ-STP ngày 12/09/2023 của Sở Tư Pháp thành phố Hà Nội phê duyệt tổ chức đấu giá
+                    tài sản đủ điều kiện thực hiện hình thức đấu giá trực tuyến.</p>
+            </div>
+        </div>
+    </footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

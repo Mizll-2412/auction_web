@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model BTL_LTWNC.Models.TblAuction;
+<link rel="stylesheet" href="~/css/Home/trangchu.css" asp-append-version="true" />
+<main>
+    <div class="container">
+        <div class="category-section">
+            <h2 class="section-title">Lối tắt danh mục</h2>
+            <div class="category-grid">
+                @if (ViewBag.Categories != null)
+                {
+                    foreach (var category in ViewBag.Categories)
+                    {
+                        <a href="@Url.Action("ListProduct", "Product", new { categoryId = category.ICategoryId })"
+                            class="category-item">
+                            <div class="category-image">
+                                <img src="@category.ImageUrl" alt="@category.SCategoryName">
+                            </div>
+                            <span class="category-title">@category.SCategoryName</span>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+        <div class="time">
+            <span id="time-text"></span>
+        </div>
+        <div class="listProduct">
+            <div class="auctionItem">
+                <p style="padding-top: 15px;">
+                    <strong>Đấu giá đang diễn ra</strong>
+                </p>
+                <p style="color: rgb(138, 145, 161); font-size: 14px; font-weight: lighter;">
+                    <i>@ViewBag.CurrentAuctions?.Count Tài sản</i>
+                </p>
+                <div class="grid-container">
+                    @if (ViewBag.CurrentAuctions != null)
+                    {
+                        @foreach (var auction in ViewBag.CurrentAuctions)
+                        {
+                            <a href="@Url.Action("Auction", "Auction", new { id = auction.IAuctionId })">
+                                <div class="item">
+                                    <img src="@auction.IProduct?.SImageUrl" alt="Auction Image">
+                                    <div class="item-content">
+                                        <h3>@auction.IProduct.SProductName</h3>
+                                        <p class="price">Giá khởi điểm: @auction.IProduct.DStartingPrice VND</p>
+                                        <p class="date-time">Bắt đầu: @auction.DtStartTime<br>Kết thúc: @auction.DtEndTime</p>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    }
+                </div>
+                <div class="auctionItem">
+                    <p>
+                        <strong>Đấu giá sắp diễn ra</strong>
+                    </p>
+                    <p style="color: rgb(138, 145, 161); font-size: 14px; font-weight: lighter;">
+                        <i>@ViewBag.UpcomingAuctions?.Count Tài sản</i>
+                    </p>
+                    <div class="grid-container">
+                        @if (ViewBag.UpcomingAuctions != null)
+                        {
+                            @foreach (var auction in  ViewBag.UpcomingAuctions)
+                            {
+                                <a href="@Url.Action("Auction", "Auction", new { id = auction.IAuctionId })">
+                                    <div class="item">
+                                        <img src="@auction.IProduct?.SImageUrl" alt="Auction Image">
+                                        <div class="item-content">
+                                            <h3>@auction.IProduct.SProductName</h3>
+                                            <p class="price">Giá khởi điểm: @auction.IProduct.DStartingPrice VND</p>
+                                            <p class="date-time">Bắt đầu: @auction.DtStartTime<br>Kết thúc: @auction.DtEndTime
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="auctionItem">
+                    <p>
+                        <strong>Đấu giá đã diễn ra</strong>
+                    </p>
+                    <p style="color: rgb(138, 145, 161); font-size: 14px; font-weight: lighter;">
+                        <i>@ViewBag.PastAuctions?.Count Tài sản</i>
+                    </p>
+                    <div class="grid-container">
+                        @if (ViewBag.PastAuctions != null)
+                        {
+                            @foreach (var auction in ViewBag.PastAuctions)
+                            {
+
+                                <a href="@Url.Action("Auction", "Auction", new { id = auction.IAuctionId })">
+                                    <div class="item">
+                                        <img src="@auction.IProduct?.SImageUrl" alt="Auction Image">
+                                        <div class="item-content">
+                                            <h3>@auction.IProduct.SProductName</h3>
+                                            <p class="price">Giá khởi điểm: @auction.IProduct.DStartingPrice VND</p>
+                                            <p class="date-time">Bắt đầu: @auction.DtStartTime<br>Kết thúc: @auction.DtEndTime
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+</main>
+<script src="~/js/home/trangchu.js"></script>

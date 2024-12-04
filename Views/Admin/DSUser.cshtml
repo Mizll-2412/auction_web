@@ -1,0 +1,273 @@
+@model IEnumerable<BTL_LTWNC.Models.TblUser>
+@{
+    ViewData["Title"] = "Danh sách tài khoản";
+    // Kiểm tra và hiển thị thông báo thành công hoặc lỗi
+    var successMessage = TempData["SuccessMessage"];
+    var errorMessage = TempData["ErrorMessage"];
+    var role = ViewBag.Role;
+}
+<link rel="stylesheet" href="~/Account/admin.css" asp-append-version="true" />
+
+<h1>@ViewData["Title"]</h1>
+
+@if (successMessage != null)
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
+<div>
+    @if (role == "Quản trị viên")
+    {
+        <a href="javascript:void(0);" class="btn btn-warning" onclick="openAddForm()">Thêm</a>
+    }
+</div>
+<table border="1" style="width:100%; text-align:left;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên </th>
+            <th>Email</th>
+            <th>Role</th>
+            @if (role != null && role == "Quản trị viên")
+            {
+                <th>Xóa</th>
+                <th>Sửa</th>
+            }
+            <th>VerifyKey</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr id="user-row-@item.IUserId">
+                <td>@item.IUserId</td>
+                <td>@item.SFullName</td>
+                <td>@item.SEmail</td>
+                <td>@item.SRole</td>
+               
+                @if (role == "Quản trị viên")
+                {
+                    <td>
+                        @if (item.SRole != "Quản trị viên")
+                        {
+                            <a href="javascript:void(0);" class="btn btn-danger" onclick="confirmDelete1(@item.IUserId)">Xóa</a>
+                        }
+                    </td>
+                    <td>
+                        @if (item.SRole != "Quản trị viên")
+                        {
+                            <a href="javascript:void(0);" class="btn btn-warning" onclick="openEditModal1(@item.IUserId)">Sửa</a>
+                        }
+                    </td>
+                 <td>@item.VerifyKey</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+<div id="editForm" style="display:none;">
+    <h3>Sửa thông tin người dùng</h3>
+    <form id="editUserForm" onsubmit="event.preventDefault(); updateUser();">
+        <input type="hidden" id="editUserId" />
+        <div class="form-group">
+            <label for="editFullName">Tên đầy đủ</label>
+            <input type="text" class="form-control" id="editFullName" />
+        </div>
+        <div class="form-group">
+            <label for="editEmail">Email</label>
+            <input type="email" class="form-control" id="editEmail" />
+        </div>
+        <div class="form-group">
+            <label for="editRole">Vai trò</label>
+            <input type="text" class="form-control" id="editRole" />
+        </div>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+        <button type="button" class="btn btn-secondary" onclick="closeEditForm()">Hủy</button>
+    </form>
+</div>
+
+<div id="addForm" style="display:none;">
+    <h3>Thêm thông tin người dùng</h3>
+    <form id="addUserForm" onsubmit="event.preventDefault(); addUser();">
+        <div class="form-group">
+            <label for="addFullName">Tên đầy đủ</label>
+            <input type="text" class="form-control" id="addFullName" />
+        </div>
+        <div class="form-group">
+            <label for="addFullName">Pass</label>
+            <input type="text" class="form-control" id="addPass" />
+        </div>
+        <div class="form-group">
+            <label for="addEmail">Email</label>
+            <input type="email" class="form-control" id="addEmail" />
+        </div>
+        <div class="form-group">
+            <label for="addEmail">Phone</label>
+            <input type="text" class="form-control" id="addPhone" />
+        </div>
+        <div class="form-group">
+            <label for="addRole">Vai trò</label>
+            <input type="text" class="form-control" id="addRole" />
+        </div>
+        <div class="form-group">
+            <label for="key">Key</label>
+            <input type="text" class="form-control" id="Key" />
+        </div>
+        <button type="submit" class="btn btn-primary">Thêm mới</button>
+        <button type="button" class="btn btn-secondary" onclick="closeAddForm()">Hủy</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete1(userId) {
+            // Xác nhận xóa người dùng
+            if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+                // Gọi API để xóa user
+                fetch(`/Admin/DeleteUserAJAX?userId=${userId}`, { // Sửa cú pháp đường dẫn URL
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // Nếu xóa thành công, xóa dòng trong bảng
+                            const row = document.getElementById(`user-row-${userId}`); // Sửa lại cách tham chiếu đến dòng
+                            if (row) {
+                                row.remove(); // Xóa dòng của user từ bảng
+                            }
+                        } else {
+                            alert('Không thể xóa: ' + result.message); // Hiển thị thông báo lỗi
+                        }
+                    })
+                    .catch(() => alert('Đã xảy ra lỗi khi xóa người dùng.')); // Xử lý lỗi khi gọi API
+            }
+        }
+        function openEditModal1(userId) {
+            fetch(`/Admin/GetUserDetails?userId=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Điền thông tin vào form
+                        console.log(data)
+                        document.getElementById("editUserId").value = data.user.iUserId;
+                        document.getElementById("editFullName").value = data.user.sFullName;
+                        document.getElementById("editEmail").value = data.user.sEmail;
+                        document.getElementById("editRole").value = data.user.sRole;
+                        document.getElementById('editForm').style.display = 'block';
+                    } else {
+                        alert('Không thể lấy thông tin người dùng.');
+                    }
+                })
+                .catch(() => alert('Đã xảy ra lỗi khi lấy dữ liệu.'));
+        }
+        function closeEditForm() {
+            document.getElementById('editForm').style.display = 'none';
+        }
+
+        function updateUser() {
+            const id = document.getElementById('editUserId').value;
+            const fullName = document.getElementById('editFullName').value;
+            const email = document.getElementById('editEmail').value;
+            const role = document.getElementById('editRole').value;
+
+            const user = {
+                iUserId: id,
+                SFullName: fullName,
+                SEmail: email,
+                SRole: role
+            };
+            console.log(user)
+            // Send the updated data to the server
+            fetch('/Admin/UpdateUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Cập nhật thành công!');
+                        closeEditForm();
+                        const row = document.getElementById(`user-row-${id}`);
+                        row.querySelector('td:nth-child(2)').textContent = fullName;
+                        row.querySelector('td:nth-child(3)').textContent = email;
+                        row.querySelector('td:nth-child(4)').textContent = role;
+                    } else {
+                        alert('Cập nhật thất bại: ' + result.message);
+                    }
+                })
+        }
+        function openAddForm() {
+            document.getElementById('addForm').style.display = 'block';
+        }
+
+        function closeAddForm() {
+            document.getElementById('addForm').style.display = 'none';
+        }
+        function addUser() {
+            const fullName = document.getElementById('addFullName').value;
+            const email = document.getElementById('addEmail').value;
+            const role = document.getElementById('addRole').value;
+            const password = document.getElementById('addPass').value;
+            const phone = document.getElementById('addPhone').value;
+            const key = document.getElementById('Key').value;
+            const user = {
+                SFullName: fullName,
+                SEmail: email,
+                SRole: role,
+                SPassword: password,
+                SPhoneNumber: phone,
+                VerifyKey: key
+            };
+
+            fetch('/Admin/AddUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Thêm người dùng thành công!');
+                        closeAddForm();
+                        console.log(result)
+                        const tableBody = document.querySelector('table tbody');
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                                        <td>${result.user.IUserId}</td>
+                                        <td>${result.user.SFullName}</td>
+                                        <td>${result.user.SEmail}</td>
+                                        <td>${result.user.SRole}</td>
+                                        <td>
+                                            <a href="javascript:void(0);" class="btn btn-danger" onclick="confirmDelete1(${result.user.IUserId})">Xóa</a>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" class="btn btn-warning" onclick="openEditModal1(${result.user.IUserId})">Sửa</a>
+                                        </td>
+                                        <td>${result.user.VerifyKey}</td>
+                                    `;
+                        tableBody.appendChild(newRow);
+                    } else {
+                        alert('Thêm người dùng thất bại: ' + result.message);
+                    }
+                })
+                .catch(() => alert('Đã xảy ra lỗi khi thêm người dùng.'));
+        }
+    </script>
+}

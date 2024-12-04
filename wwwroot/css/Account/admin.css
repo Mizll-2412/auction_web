@@ -1,0 +1,65 @@
+.table-container {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+}
+
+.table-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+.table-cell {
+    flex: 1 1 33%; /* Mỗi ô chiếm 33% chiều rộng của dòng (trên laptop) */
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    box-sizing: border-box; /* Đảm bảo padding không làm thay đổi chiều rộng */
+}
+
+/* 2. Header của bảng, định nghĩa để có màu nền cho tiêu đề */
+.table-row.header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+/* 3. Media Query cho màn hình nhỏ (mobile) */
+@media (max-width: 768px) {
+    .table-cell {
+        flex: 1 1 100%; /* Mỗi ô sẽ chiếm toàn bộ chiều rộng dòng */
+    }
+}
+
+/* 4. Thiết lập cho các link (button Xóa và Sửa) */
+.table-cell a {
+    display: block;
+    padding: 8px;
+    margin: 5px 0;
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.table-cell a:hover {
+    background-color: #0056b3;
+}
+
+/* 5. Styling khi hiển thị các nút Xóa và Sửa */
+.table-cell a.btn-danger {
+    background-color: #dc3545;
+}
+
+.table-cell a.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.table-cell a.btn-warning {
+    background-color: #ffc107;
+}
+
+.table-cell a.btn-warning:hover {
+    background-color: #e0a800;
+}

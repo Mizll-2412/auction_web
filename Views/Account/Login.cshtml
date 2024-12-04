@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/_LayoutNoHeader.cshtml";
+}
+@model BTL_LTWNC.Models.TblUser
+<link rel="stylesheet" href="~/css/Account/DangKy.css" asp-append-version="true" />
+<form id="form1" asp-action="Login" method="post">
+    <div class="form-dang-nhap">
+        <h1>Đăng nhập</h1>
+        <label for="email">Email</label>
+        <input asp-for="SEmail" type="text" id="email" name="email" required />
+        <label asp-for="SPassword" for="password">Mật Khẩu</label>
+        <div class="password-container">
+            <input asp-for="SPassword" type="password" id="password" name="password" required />
+            <span class="password-toggle">👁️</span>
+        </div>
+        <button type="submit" id="btnDangNhap" name="btnDangNhap">Đăng nhập</button>
+        <p>Chưa có tài khoản? <a asp-action="Register">Đăng ký</a></p>
+    </div>
+</form>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="validation-summary-errors">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+<script src="~/js/Account/DangNhap.js"></script>

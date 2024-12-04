@@ -1,0 +1,81 @@
+@model List<BTL_LTWNC.Models.TblProduct>
+@{
+    ViewData["Title"] = "Products";
+    var isAdmin = ViewBag.IsAdmin;
+}
+
+<link rel="stylesheet" href="~/css/Home/sanpham.css" asp-append-version="true" />
+
+@if (isAdmin)
+{
+    <a href="@Url.Action("AddProduct", "Product")" class="btn btn-primary">Thêm sản phẩm mới</a>
+}
+
+<div class="product-page">
+    <div class="product-container">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var product in Model)
+            {
+                <div class="product-item" id="product-@product.IProductId">
+                    <div class="product-image">
+                        <img src="@product.SImageUrl" alt="@product.SProductName">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">@product.SProductName</h3>
+                        <div class="location-info">
+                            <span class="description">@product.SDescription</span>
+                            <span class="seller">Seller: @product.ISeller.SFullName</span>
+                        </div>
+                        <div class="product-meta">
+                            <span class="price">@product.DStartingPrice</span>
+                        </div>
+                    </div>
+
+                    @if (isAdmin)
+                    {
+                        <div class="product-actions">
+                            <a href="javascript:void(0)" class="btn btn-edit" onclick="editProduct(@product.IProductId)">Sửa</a>
+                            <form method="post" id="deleteForm-@product.IProductId" style="display:inline;">
+                                <button type="button" class="btn btn-delete"
+                                    onclick="deleteProduct(@product.IProductId)">Xóa</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    // AJAX function to handle product delete
+    async function deleteProduct(IProductId) {
+        const confirmation = confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
+        if (!confirmation) return;
+
+        try {
+            const response = await fetch(`/Product/DeleteProduct/${IProductId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById(`product-${IProductId}`).remove(); // Xóa phần tử sản phẩm khỏi DOM
+                alert("Sản phẩm đã được xóa.");
+            } else {
+                alert("Có lỗi xảy ra khi xóa sản phẩm.");
+            }
+        } catch (error) {
+            alert("Có lỗi xảy ra.");
+        }
+    }
+
+    // Placeholder function for Edit (You can redirect to the Edit page)
+    function editProduct(IProductId) {
+        window.location.href = `@Url.Action("EditProduct", "Product")/${IProductId}`;
+    }
+</script>

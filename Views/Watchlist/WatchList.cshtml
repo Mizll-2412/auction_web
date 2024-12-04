@@ -1,0 +1,49 @@
+@model IEnumerable<BTL_LTWNC.Models.TblWatchlist>
+
+@{
+    ViewData["Title"] = "Giỏ Hàng";
+}
+<link rel="stylesheet" href="~/css/watchlist.css" asp-append-version="true" />
+
+<div class="content-container">
+    <table class="content-table">
+        <thead>
+            <tr>
+                <th style="text-align: center;">Ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Mô tả sản phẩm</th>
+                <th>Giá sản phẩm</th>
+                <th>Người bán</th>
+                <th style="text-align: center;">Xóa</th>
+                <th style="text-align: center;">Thanh toán</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var watchlist in Model)
+            {
+
+                <tr>
+                    <td>
+                        <img src="@watchlist.IProduct?.SImageUrl" alt="@watchlist.IProduct?.SProductName" />
+                    </td>
+                    <td style="display: none;">@watchlist.IWatchlistId</td>
+                    <td>@watchlist.IProduct?.SProductName</td>
+                    <td>@watchlist.IProduct?.SDescription</td>
+                    <td>@watchlist.IProduct?.DStartingPrice.ToString("N0") VND</td>
+                    <td>@watchlist.IProduct?.ISeller?.SFullName</td>
+                    <td>
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="btn btn-danger"
+                            onclick="deleteProduct('@watchlist.IProduct?.IProductId', '@watchlist.IProduct?.SProductName')">Xóa</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-success"
+                            onclick="location.href='@Url.Action("ThanhToan", "Transaction", new { watchlistId = watchlist.IWatchlistId })'">
+                            Thanh toán
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

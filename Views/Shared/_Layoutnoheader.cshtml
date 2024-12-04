@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BTL_LTWNC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BTL_LTWNC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha384-DyZv0Z+F9gG12L7pSc9g3Rnl1/Jx6ByG6Z3t8c+2D67PZ5h5Bx4Bd1WcB1C5gL4a" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* CSS cho header cố định */
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            height: 65px;
+            width: 100%;
+            z-index: 1000;
+            top: 0;
+            position: fixed;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar .navbar-brand {
+            font-weight: bold;
+            color: white;
+            font-size: 30px;
+            margin-left: 20px; /* Khoảng cách bên trái */
+            margin-top: 30px;
+            padding-top: 30px;
+        }
+
+        .navbar .header .navbar-brand{
+            padding: 30px;
+            position: relative;
+            top : 40px;
+           
+        }
+
+        .navbar .nav-link {
+            color: white !important;
+            margin-left: 10px; /* Thêm khoảng cách bên trái cho các liên kết */
+
+        }
+
+        .navbar .nav-link:hover {
+            color: #cce7ff !important;
+        }
+
+        body {
+            padding-top: 80px; /* Cách giữa nội dung với header */
+        }
+
+        .navbar-nav {
+            margin-left: auto; /* Đẩy các liên kết sang bên phải */
+            margin-right: 40px;
+            margin-bottom: 50px;
+        }
+        .header {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        @RenderBody()
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

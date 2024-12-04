@@ -1,0 +1,50 @@
+@model BTL_LTWNC.Models.TblUser
+
+@{
+    ViewData["Title"] = "Sửa thông tin người dùng";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="SFullName">Tên đầy đủ</label>
+        <input type="text" class="form-control" id="SFullName" name="SFullName" value="@Model.SFullName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="SEmail">Email</label>
+        <input type="email" class="form-control" id="SEmail" name="SEmail" value="@Model.SEmail" required />
+    </div>
+
+    <div class="form-group">
+        <label for="SPhoneNumber">Số điện thoại</label>
+        <input type="text" class="form-control" id="SPhoneNumber" name="SPhoneNumber" value="@Model.SPhoneNumber" />
+    </div>
+
+    <div class="form-group">
+        <label for="SRole">Vai trò</label>
+        <input type="text" class="form-control" id="SRole" name="SRole" value="@Model.SRole">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+</form>
+
+<a href="@Url.Action("DSUser")" class="btn btn-secondary">Trở lại</a>

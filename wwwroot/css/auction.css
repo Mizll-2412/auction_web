@@ -1,0 +1,70 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.content-container {
+    margin: 100px;
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Sửa phần hiển thị ảnh */
+.product-container {
+    margin-top: 30px;
+    background-color: white;
+    padding: 30px;
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-images img {
+    width: 80%; /* Giảm kích thước ảnh xuống 80% */
+    max-width: 500px; /* Giới hạn chiều rộng tối đa của ảnh */
+    height: auto; /* Đảm bảo tỷ lệ khung hình ảnh không bị méo */
+    border-radius: 10px;
+    display: block; /* Đảm bảo ảnh hiển thị như một khối */
+    margin: 0 auto; /* Canh giữa ảnh */
+    margin-bottom: 20px; /* Thêm khoảng cách dưới ảnh */
+}
+
+.timer {
+    font-size: 32px;
+    color: #ff6f61;
+    font-weight: bold;
+}
+
+.btn-container {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-container input {
+    border-radius: 8px;
+    height: 37.25px;
+    width: 85%;
+    border-color: #ddd;
+    font-size: 15px;
+    padding: 5px;
+}
+
+.btn-container input:hover {
+    background-color: #f3f3f3;
+}
+
+.btn-container button {
+    width: 15%;
+    border-radius: 8px;
+    height: 37.25px;
+}
+
+.btn-container p {
+    display: block;
+}

@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "Chi Tiết Đấu Giá";
+    var auction = ViewBag.Auction as BTL_LTWNC.Models.TblAuction;
+    var auctionBids = ViewBag.AuctionBids as List<BTL_LTWNC.Models.TblBid>;
+}
+
+<link rel="stylesheet" href="~/css/auction.css" asp-append-version="true" />
+
+<div class="content-container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="product-container product-images mb-3">
+                @if (auction != null && auction.IProduct != null)
+                {
+                    <img src="@auction.IProduct.SImageUrl" alt="Product Image">
+                }
+                else
+                {
+                    <p>Không có hình ảnh sản phẩm.</p>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h5 class="text-center mb-4"><strong>Chi Tiết Đấu Giá</strong></h5>
+            @if (auction != null)
+            {
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td><strong>Tên sản phẩm:</strong></td>
+                            <td>@auction.IProduct?.SProductName</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Giá khởi điểm:</strong></td>
+                            <td>@string.Format("{0:C}", auction.IProduct?.DStartingPrice)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Thời gian bắt đầu:</strong></td>
+                            <td>@auction.DtStartTime</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Thời gian kết thúc:</strong></td>
+                            <td>@auction.DtEndTime</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div>
+                    <strong>
+                        <p style="font-size: 20px;">
+                            Giá cao nhất hiện tại: <span class="text-danger">@String.Format("{0:C}",
+                            auction.DHighestBid)</span>
+                        </p>
+                    </strong>
+                </div>
+            }
+            else
+            {
+                <p>Không tìm thấy thông tin đấu giá.</p>
+            }
+            <div class="btn-container">
+                <input type="text" id="bid" placeholder="Nhập số tiền đấu giá">
+                @Html.AntiForgeryToken()
+                <button id="placeBidButton" class="btn btn-success">Đấu giá</button>
+                <p id="validation1"></p>
+            </div>
+            <div class="mt-5 text-center">
+                <h5><strong>Bảng Thông Tin Đấu Giá</strong></h5>
+                @if (auctionBids != null && auctionBids.Any())
+                {
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Người Đấu Giá</th>
+                                <th>Số Tiền Đấu Giá</th>
+                                <th>Thời Gian Đấu Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var bid in auctionBids)
+                            {
+                                <tr>
+                                    <td>@bid.IBidder.SFullName</td>
+                                    <td>@String.Format("{0:C}", bid.DBidAmount)</td>
+                                    <td>@bid.DtBidTime</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Chưa có ai đấu giá cho sản phẩm này.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

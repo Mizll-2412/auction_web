@@ -1,0 +1,40 @@
+@{
+    Layout = "~/Views/Shared/_Layoutnoheader.cshtml";
+    ViewData["Title"] = "Đăng ký";
+}
+@model BTL_LTWNC.Models.TblUser
+<link rel="stylesheet" href="~/css/Account/DangKy.css" asp-append-version="true" />
+
+<form id="form1" asp-action="Register" method="post">
+<div class="form-dang-ky">
+            <h1>Đăng ký</h1>
+            <label for="txtEmail">Email</label>
+            <input type="text" id="txtEmail" class="form-control" asp-for="SEmail"/>
+            <label id="LoiRongTxtEmail" style="display:none;">Bạn phải nhập Email</label>
+            <label id="LoiSaiDinhDang" style="display:none;">Bạn cần nhập đúng định dạng Email</label>
+            <label for="txtSoDienThoai">Số điện thoại</label>
+            <input type="text" id="txtSoDienThoai" class="form-control" asp-for="SPhoneNumber"/>
+            <label id="LoiRongTxtSoDienThoai" style="display:none;">Bạn phải nhập Số Điện Thoại</label>
+            <label id="LoiSaiDinhDangSDT" style="display:none;">Bạn cần nhập đúng định dạng</label>
+            <label for="txtFullName">Họ Tên</label>
+            <input type="text" id="txtFullName" class="form-control" asp-for="SFullName"/>
+            <label id="LoiRongTxtFullName" style="display:none;">Bạn phải nhập họ tên của mình</label>
+            <label for="txtMatKhau">Mật Khẩu</label>
+            <div class="password-container">
+                <input type="password" id="txtMatKhau" class="form-control" asp-for="SPassword" />
+                <span class="password-toggle">👁️</span>
+            </div>
+            <label id="LoiRongTxtMatKhau" style="display:none;">Bạn cần nhập mật khẩu</label>
+            <label id="LoiRongDoDaiMK" style="display:none;">Mật khẩu cần tối thiểu 6 ký tự (bao gồm cả chữ hoa, chữ thường và số)</label>
+            <label for="txtNhapLaiMatKhau">Nhập Lại Mật Khẩu</label>
+            <div class="password-container">
+                <input type="password" id="txtNhapLaiMatKhau" name="txtNhapLaiMatKhau" class="form-control" />
+                <span class="password-togglee">👁️</span>
+            </div>
+            <label id="LoiLapLaiTxtMatKhau" style="display:none;">Nhập lại mật khẩu không đúng</label>
+            <label id="LoiSaiTaiKhoan" style="display:none;"></label>
+            <button type="submit" id="btnDangKy" name="btnDangKy">Đăng ký</button>
+            <p>Đã có tài khoản? <a asp-action="Login">Đăng nhập</a></p>
+        </div>
+</form>
+<script src="~/js/Account/DangKy.js"></script>
