@@ -20,9 +20,23 @@ namespace BTL_LTWNC.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<TblBid>> GetBidsByAuctionIdAsync(int auctionId)
+        {
+            return await _context.TblBids
+                                 .Where(b => b.IAuctionId == auctionId)  // Thay vì tìm theo IBidId, tìm theo IAuctionId
+                                 .Include(b => b.IBidder)
+                                 .Include(b => b.IAuction)
+                                 .OrderByDescending(b => b.DBidAmount)
+                                 .ToListAsync();
+        }
+
+
         public async Task<TblBid> GetByIdAsync(int id)
         {
-            return await _context.TblBids.FindAsync(id);
+            return await _context.TblBids
+                   .Include(b => b.IBidder)
+                   .Include(b => b.IAuction)
+                   .FirstOrDefaultAsync(b => b.IBidId == id);
         }
 
         public async Task AddAsync(TblBid entity)

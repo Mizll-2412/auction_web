@@ -1,11 +1,9 @@
-/* Reset margin and padding */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* General page layout */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;

@@ -144,3 +144,4 @@ D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.MvcApplicationPartsAssemblyInfo.cs
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\X.PagedList.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\X.PagedList.Mvc.Core.dll
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.sourcelink.json

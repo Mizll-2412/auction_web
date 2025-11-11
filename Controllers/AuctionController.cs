@@ -38,7 +38,7 @@ namespace BTL_LTWNC.Controllers
                 return NotFound(); // Nếu không tìm thấy đấu giá, trả về lỗi 404
             }
 
-            var auctionBids = await _bidRepository.GetByIdAsync(id);
+            var auctionBids = await _bidRepository.GetBidsByAuctionIdAsync(id);
 
             ViewBag.Auction = auction;
             ViewBag.AuctionBids = auctionBids;
