@@ -1,6 +1,7 @@
 using BTL_LTWNC.Models;
 using BTL_LTWNC.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
@@ -10,17 +11,19 @@ namespace BTL_LTWNC.Controllers
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IWatchlistRepository _watchlistRepository; // Giả sử bạn có repository cho Watchlist
+        private readonly IWatchlistRepository _watchlistRepository;
+        private readonly DbBtlLtwncContext _context;
 
-        // Use a single constructor to accept all required dependencies
         public TransactionController(
             ITransactionRepository transactionRepository,
             IProductRepository productRepository,
-            IWatchlistRepository watchlistRepository)
+            IWatchlistRepository watchlistRepository,
+            DbBtlLtwncContext context)
         {
             _transactionRepository = transactionRepository;
             _productRepository = productRepository;
             _watchlistRepository = watchlistRepository;
+            _context = context;
         }
 
         // Chức năng lấy thông tin người dùng từ session
@@ -32,6 +35,23 @@ namespace BTL_LTWNC.Controllers
                 return JsonConvert.DeserializeObject<TblUser>(userJson);
             }
             return null;
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var auction = await _context.TblAuctions
+                        .Include(a => a.IProduct)
+                        .FirstOrDefaultAsync(a => a.IAuctionId == id);
+            var transactions = await _context.TblTransactions
+                        .Where(t => t.IAuctionId == id)
+                        .Include(t => t.Buyer)
+                        .OrderByDescending(t => t.DtTransactionTime)
+                        .ToListAsync();
+
+            ViewBag.Auction = auction;
+            ViewBag.AuctionTransactions = transactions;
+
+            return View();
         }
 
         // GET: ThanhToan từ Watchlist

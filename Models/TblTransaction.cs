@@ -15,7 +15,11 @@ public partial class TblTransaction
 
     public DateTime? DtTransactionTime { get; set; }
 
+    public TblAuction Auction { get; set; }
+
+    public TblUser Buyer { get; set; }
     public virtual TblAuction? IAuction { get; set; }
 
     public virtual TblUser? IBuyer { get; set; }
 }
+

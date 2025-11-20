@@ -58,5 +58,15 @@ namespace BTL_LTWNC.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<List<TblTransaction>> GetAuctionTransactions(int auctionId)
+        {
+            return await _context.TblTransactions
+                .Where(t => t.IAuctionId == auctionId)
+                .Include(t => t.Buyer)       // lấy thông tin người đấu giá
+                .Include(t => t.Auction)
+                .OrderByDescending(t => t.DtTransactionTime)
+                .ToListAsync();
+        }
     }
 }

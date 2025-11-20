@@ -5,94 +5,128 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BTL_LTWNC</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BTL_LTWNC.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-        integrity="sha384-DyZv0Z+F9gG12L7pSc9g3Rnl1/Jx6ByG6Z3t8c+2D67PZ5h5Bx4Bd1WcB1C5gL4a" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
-        /* CSS cho header cố định */
-        .navbar {
-            background-color: #007bff;
-            color: white;
-            height: 65px;
-            width: 100%;
-            z-index: 1000;
-            top: 0;
-            position: fixed;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        /* -------- HEADER -------- */
+        .navbar-custom {
+            background: linear-gradient(90deg, #0062ff, #4f8cff);
+            height: 70px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
-        .navbar .navbar-brand {
-            font-weight: bold;
-            color: white;
-            font-size: 30px;
-            margin-left: 20px;
-            /* Khoảng cách bên trái */
-            margin-top: 30px;
-            padding-top: 30px;
-        }
-
-        .navbar .header .navbar-brand {
-            padding: 30px;
-            position: relative;
-            top: 40px;
-
-        }
-
-        .navbar .nav-link {
+        .navbar-brand {
+            font-size: 26px;
+            font-weight: 700;
             color: white !important;
-            margin-left: 10px;
-            /* Thêm khoảng cách bên trái cho các liên kết */
-
         }
 
-        .navbar .nav-link:hover {
-            color: #cce7ff !important;
+        .nav-link {
+            color: #f2f2f2 !important;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #ffffff !important;
+        }
+
+        .nav-link::after {
+            content: "";
+            width: 0%;
+            height: 2px;
+            background: #fff;
+            position: absolute;
+            left: 0;
+            bottom: -3px;
+            transition: .3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         body {
-            padding-top: 80px;
-            /* Cách giữa nội dung với header */
+            padding-top: 90px;
+            background: #f5f7fa;
         }
 
-        .navbar-nav {
-            margin-left: auto;
-            /* Đẩy các liên kết sang bên phải */
-            margin-right: 40px;
-            margin-bottom: 50px;
+        /* -------- FOOTER -------- */
+        .footer {
+            background: #0e1a35;
+            color: #d3d9e8;
+            margin-top: 50px;
+            padding: 50px 0 20px 0;
         }
 
-        .header {
-            width: 100%;
+        .footer h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .footer p,
+        .footer li {
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .footer a {
+            color: #d3d9e8;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #fff;
+        }
+
+        .footer-bottom {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
-    @* Lấy tên người dùng từ session *@
     @{
         var userName = Context.Session.GetString("FullName");
     }
 
-    @* Kiểm tra xem trang có phải là Đăng nhập hoặc Đăng ký không *@
+    @* -------- HEADER -------- *@
     @if (!(ViewData["Title"]?.ToString() == "Đăng nhập" || ViewData["Title"]?.ToString() == "Đăng ký"))
     {
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="header">
+        <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+            <div class="container">
                 <a class="navbar-brand" href="@Url.Action("Index", "Home")">Đấu Giá HOU</a>
+
+                <button class="navbar-toggler text-light" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ms-auto align-items-center">
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Trang Chủ</a>
+                        </li>
+
                         @if (string.IsNullOrEmpty(userName))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Index">Trang Chủ</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
                             </li>
@@ -100,13 +134,13 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Index">Trang Chủ</a>
+                                <a class="nav-link" asp-controller="User" asp-action="Index">
+                                    <i class="fa-solid fa-user"></i> @userName
+                                </a>
                             </li>
+
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="User" asp-action="Index">Xin chào, @userName</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Logout" method="post">Đăng xuất</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
                             </li>
                         }
                     </ul>
@@ -114,48 +148,56 @@
             </div>
         </nav>
     }
-    
 
-    <div class="header">
+    @* -------- CONTENT -------- *@
+    <div class="container">
         @RenderBody()
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="company-info">
-                <h2>CÔNG TY ĐẤU GIÁ HOU</h2>
-                <div class="contact-details">
-                    <p><i class="fas fa-location-dot"></i> 96 Định Công, Hoàng Mai, Hà Nội</p>
-                    <p><i class="fas fa-phone"></i> 03xx.xxx.xxx</p>
-                    <p><i class="fas fa-mobile-alt"></i> 09xx.xxx.xxx</p>
-                    <p><i class="fas fa-envelope"></i> fakeemail@gmail.com</p>
-                </div>
-                <div class="registration-info">
-                    <p><i class="fas fa-file-alt"></i> Giấy đăng ký hoạt động số: 47/TP-ĐKHĐ</p>
-                    <p><i class="fas fa-calendar-alt"></i> Ngày cấp: 24-12-2022</p>
-                    <p><i class="fas fa-building"></i> Nơi cấp: Sở Tư Pháp thành phố Hà Nội</p>
-                </div>
-            </div>
 
-            <div class="help-section">
-                <h2>Trợ giúp người đấu giá</h2>
-                <ul>
-                    <li>Đăng ký tham gia tài khoản đấu giá</li>
-                    <li>Hướng dẫn chi tiết về đấu giá</li>
-                    <li>Quy định về đấu giá trực tuyến</li>
-                    <li>Chính sách bảo mật</li>
-                    <li>Quy chế hoạt động</li>
-                </ul>
+    @* -------- FOOTER -------- *@
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-5">
+                    <h2>CÔNG TY ĐẤU GIÁ HOU</h2>
+                    <p><i class="fas fa-location-dot me-2"></i>96 Định Công, Hoàng Mai, Hà Nội</p>
+                    <p><i class="fas fa-phone me-2"></i>03xx.xxx.xxx</p>
+                    <p><i class="fas fa-mobile-alt me-2"></i>09xx.xxx.xxx</p>
+                    <p><i class="fas fa-envelope me-2"></i>fakeemail@gmail.com</p>
+
+                    <p class="mt-3"><i class="fas fa-file-alt me-2"></i>Giấy đăng ký hoạt động số: 47/TP-ĐKHĐ</p>
+                    <p><i class="fas fa-calendar-alt me-2"></i>Ngày cấp: 24-12-2022</p>
+                    <p><i class="fas fa-building me-2"></i>Nơi cấp: Sở Tư Pháp Hà Nội</p>
+                </div>
+
+                <div class="col-md-4">
+                    <h2>Trợ giúp người đấu giá</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Đăng ký tài khoản đấu giá</a></li>
+                        <li><a href="#">Hướng dẫn đấu giá</a></li>
+                        <li><a href="#">Quy định đấu giá trực tuyến</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                        <li><a href="#">Quy chế hoạt động</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <h2>Theo dõi chúng tôi</h2>
+                    <p><i class="fab fa-facebook me-2"></i>Facebook</p>
+                    <p><i class="fab fa-twitter me-2"></i>Twitter</p>
+                    <p><i class="fab fa-youtube me-2"></i>YouTube</p>
+                </div>
             </div>
 
             <div class="footer-bottom">
-                <p>Quyết định số 647/QĐ-STP ngày 12/09/2023 của Sở Tư Pháp thành phố Hà Nội phê duyệt tổ chức đấu giá
-                    tài sản đủ điều kiện thực hiện hình thức đấu giá trực tuyến.</p>
+                Quyết định số 647/QĐ-STP ngày 12/09/2023 – phê duyệt tổ chức đấu giá đủ điều kiện thực hiện đấu giá trực tuyến.
             </div>
         </div>
     </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
