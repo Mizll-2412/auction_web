@@ -82,16 +82,76 @@ namespace BTL_LTWNC.Controllers
             return View();
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Register(TblUser user)
         {
             if (await _accountRepository.RegisterAsync(user))
             {
-                return RedirectToAction("Login"); 
+                return RedirectToAction("Login");
             }
             ViewBag.ErrorMessage = "Email already exists.";
-            return View(user); 
+            return View(user);
         }
+        [HttpPost]
+        public async Task<IActionResult> LoginAjax([FromBody] TblUser loginModel)
+        {
+        
+            int loginAttempts = HttpContext.Session.GetInt32("LoginAttempts") ?? 0;
+            DateTime? lockoutEnd = HttpContext.Session.Get<DateTime?>("LockoutEnd");
+
+            // Nếu đang bị khóa
+            if (lockoutEnd.HasValue && lockoutEnd > DateTime.Now)
+            {
+                TimeSpan remaining = lockoutEnd.Value - DateTime.Now;
+                return Json(new
+                {
+                    success = false,
+                    message = $"Bạn đã nhập sai 3 lần. Thử lại sau {remaining.Minutes} phút {remaining.Seconds} giây."
+                });
+            }
+
+            TblUser tblUser = await _accountRepository.LoginAsync(loginModel.SEmail, loginModel.SPassword);
+            if (tblUser == null)
+            {
+                loginAttempts++;
+                HttpContext.Session.SetInt32("LoginAttempts", loginAttempts);
+
+                if (loginAttempts >= 3)
+                {
+                    lockoutEnd = DateTime.Now.AddMinutes(30);
+                    HttpContext.Session.Set("LockoutEnd", lockoutEnd);
+                    HttpContext.Session.SetInt32("LoginAttempts", 0);
+
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Bạn đã nhập sai 3 lần. Tài khoản bị khóa 30 phút."
+                    });
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    message = $"Sai tài khoản hoặc mật khẩu. Còn {3 - loginAttempts} lần thử."
+                });
+            }
+
+            // Thành công → reset
+            HttpContext.Session.SetInt32("LoginAttempts", 0);
+            HttpContext.Session.Remove("LockoutEnd");
+
+            var jsonUser = JsonConvert.SerializeObject(tblUser);
+            HttpContext.Session.SetString("UserSession", jsonUser);
+
+            HttpContext.Session.SetString("SEmail", tblUser.SEmail);
+            HttpContext.Session.SetString("FullName", tblUser.SFullName);
+            HttpContext.Session.SetString("Phone", tblUser.SPhoneNumber);
+            HttpContext.Session.SetString("Role", tblUser.SRole);
+
+            return Json(new { success = true });
+        }
+
 
         public IActionResult Logout()
         {

@@ -3,28 +3,52 @@
     Layout = "~/Views/Shared/_LayoutNoHeader.cshtml";
 }
 @model BTL_LTWNC.Models.TblUser
-<link rel="stylesheet" href="~/css/Account/DangKy.css" asp-append-version="true" />
-<form id="form1" asp-action="Login" method="post">
-    <div class="form-dang-nhap">
-        <h1>Đăng nhập</h1>
-        <label for="email">Email</label>
-        <input asp-for="SEmail" type="text" id="email" name="email" required />
-        <label asp-for="SPassword" for="password">Mật Khẩu</label>
-        <div class="password-container">
-            <input asp-for="SPassword" type="password" id="password" name="password" required />
-            <span class="password-toggle">👁️</span>
+
+<link rel="stylesheet" href="~/css/Account/Dangky.css" asp-append-version="true" />
+
+<div class="login-wrapper">
+    <form id="form1" asp-action="Login" method="post" class="login-card">
+
+        <h2 class="title">Đăng nhập</h2>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input asp-for="SEmail" type="text" id="email" name="email" placeholder="Nhập email..." />
         </div>
-        <button type="submit" id="btnDangNhap" name="btnDangNhap">Đăng nhập</button>
-        <p>Chưa có tài khoản? <a asp-action="Register">Đăng ký</a></p>
-    </div>
-</form>
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="validation-summary-errors">
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+
+        <div class="form-group">
+            <label asp-for="SPassword">Mật khẩu</label>
+            <div class="password-box">
+                <input asp-for="SPassword" type="password" id="password" name="password" placeholder="Nhập mật khẩu...">
+                <span id="togglePassword" class="toggle-icon">👁</span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-login">Đăng nhập</button>
+
+        <p class="register-link">
+            Chưa có tài khoản?
+            <a asp-action="Register">Đăng ký</a>
+        </p>
+
+        @if (!ViewData.ModelState.IsValid)
         {
-            <p>@error.ErrorMessage</p>
+            <div class="validation-box">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            </div>
         }
-    </div>
-}
-<script src="~/js/Account/DangNhap.js"></script>
+    </form>
+</div>
+
+<script>
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordField = document.getElementById("password");
+
+    togglePassword.addEventListener("click", () => {
+        const type = passwordField.type === "password" ? "text" : "password";
+        passwordField.type = type;
+    });
+</script>

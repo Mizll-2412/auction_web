@@ -110,7 +110,7 @@
                 <a class="navbar-brand" href="@Url.Action("Index", "Home")">Đấu Giá HOU</a>
 
                 <button class="navbar-toggler text-light" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav">
+                    data-bs-target="#navbarNav">
                     <i class="fas fa-bars text-white"></i>
                 </button>
 
@@ -124,7 +124,9 @@
                         @if (string.IsNullOrEmpty(userName))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    Đăng nhập
+                                </a>
                             </li>
 
                             <li class="nav-item">
@@ -191,14 +193,72 @@
             </div>
 
             <div class="footer-bottom">
-                Quyết định số 647/QĐ-STP ngày 12/09/2023 – phê duyệt tổ chức đấu giá đủ điều kiện thực hiện đấu giá trực tuyến.
+                Quyết định số 647/QĐ-STP ngày 12/09/2023 – phê duyệt tổ chức đấu giá đủ điều kiện thực hiện đấu giá trực
+                tuyến.
             </div>
         </div>
     </footer>
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
 
+                <div class="modal-header">
+                    <h5 class="modal-title">Đăng nhập</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input name="Email" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Mật khẩu</label>
+                            <input type="password" name="Password" class="form-control" required />
+                        </div>
+
+                        <div id="loginError" class="text-danger mb-2" style="display:none;"></div>
+
+                        <button class="btn btn-primary w-100">Đăng nhập</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let data = {
+                Email: this.Email.value,
+                Password: this.Password.value
+            };
+
+            fetch("/Account/LoginAjax", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        document.getElementById("loginError").style.display = "block";
+                        document.getElementById("loginError").innerText = result.message;
+                    }
+                });
+        });
+    </script>
+
 </body>
 
 </html>

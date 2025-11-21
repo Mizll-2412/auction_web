@@ -1,108 +1,128 @@
 ﻿* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background: #f6f7fb;
 }
 
-#form1 {
-    max-width: 400px;
-    margin: 50px auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 15px;
 }
 
-.form-dang-nhap, .form-dang-ky {
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 30px 35px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    animation: fadeIn 0.5s ease;
+}
+
+.title {
     text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #333;
 }
 
-h1 {
-    color: #333;
-    margin-bottom: 20px;
+.form-group {
+    margin-bottom: 18px;
 }
 
 label {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 5px;
     display: block;
-    text-align: left;
-    margin: 10px 0;
-    font-weight: bold;
-}
-
-#LoiRongTxtEmail,
-#LoiRongTxtSoDienThoai,
-#LoiRongTxtTenDangNhap,
-#LoiRongTxtMatKhau,
-#LoiRongTxtFullName,
-#LoiSaiDinhDang,
-#LoiSaiDinhDangSDT,
-#LoiRongDoDaiMK,
-#LoiLapLaiTxtMatKhau {
-    display: none;
-    font-weight: normal;
-    color: red;
-    margin: 0px;
-}
-
-#LoiSaiTaiKhoan {
-    display: block;
-    font-weight: normal;
-    color: red;
-    margin: 0px;
 }
 
 input {
     width: 100%;
-    padding: 8px;
-    margin: 5px 0 15px 0;
-    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    transition: 0.2s;
+    font-size: 15px;
+    background: #fafafa;
 }
 
-button {
-    background-color: #AF4552;
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
+input:focus {
+    border-color: #AF4552;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(175, 69, 82, 0.12);
+}
+
+.password-box {
+    position: relative;
+}
+
+.toggle-icon {
+    position: absolute;
+    right: 12px;
+    top: 11px;
     cursor: pointer;
+    font-size: 19px;
+    opacity: 0.7;
+    transition: 0.2s;
 }
 
-    button:hover {
-        background-color: #45a049;
-    }
+.toggle-icon:hover {
+    opacity: 1;
+}
 
-p {
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #AF4552;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-login:hover {
+    background: #922f3b;
+}
+
+.register-link {
+    text-align: center;
     margin-top: 15px;
+    color: #555;
 }
 
-a {
-    color: #3498db;
+.register-link a {
+    color: #AF4552;
+    font-weight: 600;
     text-decoration: none;
 }
 
-a:hover {
-        text-decoration: underline;
+.register-link a:hover {
+    text-decoration: underline;
 }
 
-.password-container {
-        position: relative;
-        display: flex;
-        align-items: center;
+.validation-box {
+    margin-top: 20px;
+    background: #ffe6e6;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: red;
+    font-size: 14px;
 }
-.password-container input {
-        flex-grow: 1;
-}
-.password-toggle,
-.password-togglee {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-        user-select: none;
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
