@@ -37,23 +37,7 @@ namespace BTL_LTWNC.Controllers
             return null;
         }
 
-        public async Task<IActionResult> Details(int id)
-        {
-            var auction = await _context.TblAuctions
-                        .Include(a => a.IProduct)
-                        .FirstOrDefaultAsync(a => a.IAuctionId == id);
-            var transactions = await _context.TblTransactions
-                        .Where(t => t.IAuctionId == id)
-                        .Include(t => t.Buyer)
-                        .OrderByDescending(t => t.DtTransactionTime)
-                        .ToListAsync();
-
-            ViewBag.Auction = auction;
-            ViewBag.AuctionTransactions = transactions;
-
-            return View();
-        }
-
+       
         // GET: ThanhToan từ Watchlist
         public async Task<IActionResult> ThanhToan(int watchlistId)
         {

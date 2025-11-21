@@ -1,6 +1,7 @@
 using BTL_LTWNC.Models;
 using BTL_LTWNC.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,11 +12,15 @@ namespace BTL_LTWNC.Controllers
     {
         private readonly IAuctionRepository _auctionRepository;
         private readonly IBidRepository _bidRepository;
+        private readonly DbBtlLtwncContext _context;
 
-        public AuctionController(IAuctionRepository auctionRepository, IBidRepository bidRepository)
+        public AuctionController(IAuctionRepository auctionRepository, IBidRepository bidRepository, DbBtlLtwncContext context)
+
         {
             _auctionRepository = auctionRepository;
             _bidRepository = bidRepository;
+            _context = context;
+
         }
 
         // GET: Auction/Auction/{id}
@@ -45,5 +50,22 @@ namespace BTL_LTWNC.Controllers
 
             return View();
         }
+         public async Task<IActionResult> Details(int id)
+        {
+            var auction = await _context.TblAuctions
+                        .Include(a => a.IProduct)
+                        .FirstOrDefaultAsync(a => a.IAuctionId == id);
+            var transactions = await _context.TblTransactions
+                        .Where(t => t.IAuctionId == id)
+                        .Include(t => t.Buyer)
+                        .OrderByDescending(t => t.DtTransactionTime)
+                        .ToListAsync();
+
+            ViewBag.Auction = auction;
+            ViewBag.AuctionTransactions = transactions;
+
+            return View();
+        }
+
     }
 }
