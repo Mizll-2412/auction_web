@@ -4,6 +4,8 @@ using BTL_LTWNC.Models.ViewModels;
 using BTL_LTWNC.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace BTL_LTWNC.Controllers
 {
@@ -29,7 +31,9 @@ namespace BTL_LTWNC.Controllers
                 return Json(new { success = false, message = error });
             }
 
-            TblUser user = await _accountRepository.LoginAsync(model.SEmail, model.SPassword);
+            // Hash mật khẩu trước khi so sánh
+            string hashedPassword = HashPassword(model.SPassword);
+            TblUser user = await _accountRepository.LoginAsync(model.SEmail, hashedPassword);
 
             if (user == null)
                 return Json(new { success = false, message = "Sai email hoặc mật khẩu" });
@@ -54,6 +58,10 @@ namespace BTL_LTWNC.Controllers
                 return Json(new { success = false, message = error });
             }
 
+            // Kiểm tra mật khẩu xác nhận
+            if (model.SPassword != model.RePassword)
+                return Json(new { success = false, message = "Mật khẩu xác nhận không khớp" });
+
             if (await _accountRepository.IsEmailExistAsync(model.SEmail))
                 return Json(new { success = false, message = "Email đã tồn tại" });
 
@@ -62,9 +70,9 @@ namespace BTL_LTWNC.Controllers
                 SEmail = model.SEmail,
                 SFullName = model.SFullName,
                 SPhoneNumber = model.SPhoneNumber,
-                SPassword = model.SPassword,
+                SPassword = HashPassword(model.SPassword), // MÃ HÓA MẬT KHẨU
                 VerifyKey = GenerateVerifyKey(),
-                SRole = "User"
+                SRole = "Người dùng"
             };
 
             await _accountRepository.RegisterAsync(user);
@@ -77,6 +85,21 @@ namespace BTL_LTWNC.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+
+        // ================= HASH PASSWORD (SHA256) =================
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
         }
 
         // ================= VERIFY KEY =================

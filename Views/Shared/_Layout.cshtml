@@ -197,143 +197,153 @@
             </div>
         </div>
     </footer>
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+ <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Đăng nhập</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Đăng nhập</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="SEmail" id="loginEmail" class="form-control" required />
+                    </div>
 
-                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Mật khẩu</label>
+                        <input type="password" name="SPassword" id="loginPassword" class="form-control" required />
+                    </div>
 
-                    <form id="loginForm" onsubmit="loginAjax(event)">
-                        <div class="mb-3">
-                            <label>Email</label>
-                            <input name="Email" class="form-control" required />
-                        </div>
+                    <div id="loginError" class="text-danger mb-2" style="display:none;"></div>
 
-                        <div class="mb-3">
-                            <label>Mật khẩu</label>
-                            <input type="password" name="Password" class="form-control" required />
-                        </div>
-
-                        <div id="loginError" class="text-danger mb-2" style="display:none;"></div>
-
-                        <button class="btn btn-primary w-100">Đăng nhập</button>
-                    </form>
-
-                </div>
-
+                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                </form>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
+</div>
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Đăng ký tài khoản</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+<!-- ======== MODAL ĐĂNG KÝ ======== -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Đăng ký tài khoản</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-                <div class="modal-body">
-                    <form id="registerForm" onsubmit="">
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="SEmail" class="form-control" required />
+                    </div>
 
-                        <div class="mb-3">
-                            <label>Email</label>
-                            <input type="email" name="SEmail" class="form-control" required />
-                        </div>
+                    <div class="mb-3">
+                        <label>Số điện thoại</label>
+                        <input type="tel" name="SPhoneNumber" class="form-control" required />
+                    </div>
 
-                        <div class="mb-3">
-                            <label>Số điện thoại</label>
-                            <input type="text" name="SPhoneNumber" class="form-control" required />
-                        </div>
+                    <div class="mb-3">
+                        <label>Họ tên</label>
+                        <input type="text" name="SFullName" class="form-control" required />
+                    </div>
 
-                        <div class="mb-3">
-                            <label>Họ tên</label>
-                            <input type="text" name="SFullName" class="form-control" required />
-                        </div>
+                    <div class="mb-3">
+                        <label>Mật khẩu</label>
+                        <input type="password" name="SPassword" class="form-control" required />
+                    </div>
 
-                        <div class="mb-3">
-                            <label>Mật khẩu</label>
-                            <input type="password" name="SPassword" class="form-control" required />
-                        </div>
+                    <div class="mb-3">
+                        <label>Nhập lại mật khẩu</label>
+                        <input type="password" name="RePassword" class="form-control" required />
+                    </div>
 
-                        <div class="mb-3">
-                            <label>Nhập lại mật khẩu</label>
-                            <input type="password" name="RePassword" class="form-control" required />
-                        </div>
+                    <div id="registerError" class="text-danger mb-2" style="display:none;"></div>
 
-                        <div id="registerError" class="text-danger mb-2" style="display:none;"></div>
-                        <div id="registerSuccess" class="text-success mb-2" style="display:none;"></div>
-
-                        <button class="btn btn-success w-100">Đăng ký</button>
-                    </form>
-                </div>
-
+                    <button type="submit" class="btn btn-success w-100">Đăng ký</button>
+                </form>
             </div>
         </div>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+</div>
 
-    <script>
-        function loginAjax(e) {
-            e.preventDefault();
-            const email = document.getElementById("loginEmail").value;
-            const password = document.getElementById("loginPassword").value;
+<!-- ======== JAVASCRIPT ======== -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-            fetch("/Account/LoginAjax", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    SEmail: email,
-                    SPassword: password
-                })
+<script>
+    // ===== ĐĂNG NHẬP =====
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        const errorDiv = document.getElementById("loginError");
+
+        fetch("/Account/LoginAjax", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                SEmail: email,
+                SPassword: password
             })
-                .then(res => res.json())
-                .then(res => {
-                    if (res.success) {
-                        location.reload();
-                    } else {
-                        alert(res.message);
-                    }
-                });
-            document.getElementById("registerForm").addEventListener("submit", function (e) {
-                e.preventDefault();
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                errorDiv.innerText = data.message;
+                errorDiv.style.display = "block";
+            }
+        })
+        .catch(err => {
+            errorDiv.innerText = "Có lỗi xảy ra, vui lòng thử lại!";
+            errorDiv.style.display = "block";
+        });
+    });
 
-                let data = {
-                    SEmail: this.SEmail.value,
-                    SFullName: this.SFullName.value,
-                    SPhoneNumber: this.SPhoneNumber.value,
-                    SPassword: this.SPassword.value,
-                    RePassword: this.RePassword.value
-                };
+    // ===== ĐĂNG KÝ =====
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-                fetch("/Account/RegisterAjax", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                })
-                    .then(res => res.json())
-                    .then(r => {
-                        if (r.success) {
-                            alert("Đăng ký thành công!");
-                            location.reload();
-                        } else {
-                            document.getElementById("registerError").innerText = r.message;
-                            document.getElementById("registerError").style.display = "block";
-                        }
-                    });
-            });
-    </script>
-    </script>
+        const data = {
+            SEmail: this.SEmail.value,
+            SFullName: this.SFullName.value,
+            SPhoneNumber: this.SPhoneNumber.value,
+            SPassword: this.SPassword.value,
+            RePassword: this.RePassword.value
+        };
 
+        const errorDiv = document.getElementById("registerError");
+
+        fetch("/Account/RegisterAjax", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                alert("Đăng ký thành công!");
+                const modal = bootstrap.Modal.getInstance(document.getElementById("registerModal"));
+                modal.hide();
+                location.reload();
+            } else {
+                errorDiv.innerText = result.message;
+                errorDiv.style.display = "block";
+            }
+        })
+        .catch(err => {
+            errorDiv.innerText = "Có lỗi xảy ra, vui lòng thử lại!";
+            errorDiv.style.display = "block";
+        });
+    });
+</script>
 </body>
 
 </html>
