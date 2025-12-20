@@ -11,16 +11,19 @@
         border-radius: 16px;
         overflow: hidden;
     }
+
     .auction-card:hover {
         transform: translateY(-6px);
-        box-shadow: 0px 10px 25px rgba(0,0,0,0.15);
+        box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
     }
+
     .auction-img {
         height: 180px;
         object-fit: cover;
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
     }
+
     .countdown {
         font-weight: bold;
         color: #d9534f;
@@ -40,11 +43,11 @@
                 foreach (var category in ViewBag.Categories)
                 {
                     <div class="col-6 col-md-3 col-lg-2">
-                        <a href="@Url.Action("ListProduct", "Product", new { categoryId = category.ICategoryId })"
-                           class="text-decoration-none text-dark">
+                        <a href="javascript:void(0)" class="text-decoration-none text-dark category-link"
+                            data-url="@Url.Action("ListProduct", "Product", new { categoryId = category.ICategoryId })">
                             <div class="card shadow-sm h-100 text-center p-2" style="border-radius:16px;">
-                                <img src="@category.ImageUrl" loading="lazy"
-                                     class="img-fluid rounded" style="height:80px;object-fit:cover;" />
+                                <img src="@category.ImageUrl" loading="lazy" class="img-fluid rounded"
+                                    style="height:80px;object-fit:cover;" />
                                 <div class="mt-2 fw-semibold">@category.SCategoryName</div>
                             </div>
                         </a>
@@ -66,12 +69,10 @@
                 {
                     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
                         <a href="@Url.Action("Auction", "Auction", new { id = auction.IAuctionId })"
-                           class="text-decoration-none text-dark">
+                            class="text-decoration-none text-dark">
 
                             <div class="card auction-card shadow-sm">
-                                <img src="@auction.IProduct?.SImageUrl"
-                                     loading="lazy"
-                                     class="auction-img">
+                                <img src="@auction.IProduct?.SImageUrl" loading="lazy" class="auction-img">
 
                                 <div class="card-body">
                                     <h5 class="fw-bold">@auction.IProduct.SProductName</h5>
@@ -101,7 +102,25 @@
     </section>
 
 </main>
+<script>
+    const isLoggedIn = @(Context.Session.GetString("UserSession") != null ? "true" : "false");
+</script>
+<script>
+    document.querySelectorAll(".category-link").forEach(el => {
+        el.addEventListener("click", function () {
 
+            if (!isLoggedIn) {
+                const loginModal = new bootstrap.Modal(
+                    document.getElementById("loginModal")
+                );
+                loginModal.show();
+                return;
+            }
+
+            window.location.href = this.dataset.url;
+        });
+    });
+</script>
 <script>
     /* COUNTDOWN FUNCTION */
     function countdown(endTime, elementId) {
