@@ -19,13 +19,21 @@ namespace BTL_LTWNC.Repositories
                 .Include(a => a.IWinner)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<TblAuction>> GetAuctionsByProductIdAsync(int productId)
+        public async Task<TblAuction> GetAuctionByProductIdAsync(int productId)
         {
             return await _context.TblAuctions
-                .Where(a => a.IProduct.IProductId == productId)
                 .Include(a => a.IProduct)
-                .Include(a => a.IWinner)
-                .ToListAsync();
+                    .ThenInclude(p => p.ISeller)
+                .Where(a => a.IProductId == productId)
+                .OrderByDescending(a => a.DtStartTime)
+                .FirstOrDefaultAsync();
+        }
+        public async Task<List<TblAuction>> GetAuctionsByProductIdAsync(int productId)
+        {
+            return await _context.TblAuctions
+            .Include(a => a.IProduct)
+            .Where(a => a.IProductId == productId)
+            .ToListAsync();
         }
 
         public async Task<TblAuction> GetByIdAsync(int id)
@@ -63,7 +71,7 @@ namespace BTL_LTWNC.Repositories
         {
             return await _context.TblTransactions
                 .Where(t => t.IAuctionId == auctionId)
-                .Include(t => t.Buyer)       // lấy thông tin người đấu giá
+                .Include(t => t.Buyer) 
                 .Include(t => t.Auction)
                 .OrderByDescending(t => t.DtTransactionTime)
                 .ToListAsync();
