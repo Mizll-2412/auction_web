@@ -53,7 +53,7 @@ namespace BTL_LTWNC.Controllers
 
         //     return View();
         // }
-        // [Route("Auction/Detail")]
+        [Route("Auction/Detail")]
         public async Task<IActionResult> Auction(int productId)
         {
             var userJson = HttpContext.Session.GetString("UserSession");

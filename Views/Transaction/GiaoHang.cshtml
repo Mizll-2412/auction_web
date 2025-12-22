@@ -45,10 +45,10 @@
             <div class="row">
                 <!-- First column: Product Image -->
                 <div class="col-6 col-md-2 mb-3">
-                    @if (Model?.IAuction?.IProduct?.SImageUrl != null)
+                    @if (Model?.Auction?.IProduct?.SImageUrl != null)
                     {
-                        <img src="/images/@Model.IAuction?.IProduct?.SImageUrl"
-                            alt="@Model.IAuction?.IProduct?.SProductName" class="img-fluid product-image" />
+                        <img src="/images/@Model.Auction?.IProduct?.SImageUrl"
+                            alt="@Model.Auction?.IProduct?.SProductName" class="img-fluid product-image" />
                     }
                     else
                     {
@@ -58,7 +58,7 @@
 
                 <!-- Second column: Product Name -->
                 <div class="col-6 col-md-2 mb-3">
-                    <span>@(Model?.IAuction?.IProduct?.SProductName ?? "Tên sản phẩm")</span>
+                    <span>@(Model?.Auction?.IProduct?.SProductName ?? "Tên sản phẩm")</span>
                 </div>
 
                 <!-- Third column: Starting Price -->
@@ -68,7 +68,7 @@
 
                 <div class="col-6 col-md-2 mb-3">
                     @* Trạng thái thuộc các giá trị ("Đã xác nhận", "Đang giao hàng", "Giao hàng thành công", "Giao hàng thất bại") *@
-                    <span>@(Model?.IAuction?.DHighestBid.ToString() ?? "Trạng thái")</span>
+                    <span>@(Model?.Auction?.DHighestBid.ToString() ?? "Trạng thái")</span>
                 </div>
 
                 <div class="col-6 col-md-2 mb-3"

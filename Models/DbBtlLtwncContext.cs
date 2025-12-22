@@ -187,11 +187,11 @@ public partial class DbBtlLtwncContext : DbContext
             entity.Property(e => e.IAuctionId).HasColumnName("iAuctionId");
             entity.Property(e => e.IBuyerId).HasColumnName("iBuyerId");
 
-            entity.HasOne(d => d.IAuction).WithMany(p => p.TblTransactions)
+            entity.HasOne(d => d.Auction).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.IAuctionId)
                 .HasConstraintName("FK__tblTransa__iAuct__5BE2A6F2");
 
-            entity.HasOne(d => d.IBuyer).WithMany(p => p.TblTransactions)
+            entity.HasOne(d => d.Buyer).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.IBuyerId)
                 .HasConstraintName("FK__tblTransa__iBuye__5CD6CB2B");
         });
