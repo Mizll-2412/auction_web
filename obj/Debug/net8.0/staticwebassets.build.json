@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "JUQ5TIvJxd7KnGdSiYeJFkV7G1IgAbQGG1OcHtZG4w4=",
+  "Hash": "81gZoMR3fQ9oKCMRuZ1iE0oFUAa1LguCVSDdSGBh/V8=",
   "Source": "BTL_LTWNC",
   "BasePath": "_content/BTL_LTWNC",
   "Mode": "Default",
@@ -129,6 +129,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\auction.css"
+    },
+    {
+      "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\Home\\product-form.css",
+      "SourceId": "BTL_LTWNC",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\",
+      "BasePath": "_content/BTL_LTWNC",
+      "RelativePath": "css/Home/product-form.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\Home\\product-form.css"
     },
     {
       "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\Home\\sanpham.css",
