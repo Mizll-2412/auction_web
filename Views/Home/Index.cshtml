@@ -68,11 +68,11 @@
                 foreach (var auction in ViewBag.CurrentAuctions)
                 {
                     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                        <a href="@Url.Action("Auction", "Auction", new { id = auction.IAuctionId })"
-                            class="text-decoration-none text-dark">
+                        <a href="@Url.Action("Detail", "Auction", 
+                                   new { productId = auction.IProductId })" class="text-decoration-none text-dark">
 
-                            <div class="card auction-card shadow-sm">
-                                <img src="@auction.IProduct?.SImageUrl" loading="lazy" class="auction-img">
+                    <div class="card auction-card shadow-sm">
+                        <img src="@auction.IProduct?.SImageUrl" loading="lazy" class="auction-img">
 
                                 <div class="card-body">
                                     <h5 class="fw-bold">@auction.IProduct.SProductName</h5>
@@ -96,7 +96,7 @@
 
                         </a>
                     </div>
-                }
+                        }
             }
         </div>
     </section>
