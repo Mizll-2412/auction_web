@@ -24,8 +24,6 @@ namespace BTL_LTWNC.Controllers
             ViewBag.UpcomingAuctions = upcomingAuctions;
             ViewBag.CurrentAuctions = activeAuctions;
             ViewBag.PastAuctions = pastAuctions;
-
-
             return View();
         }
     }

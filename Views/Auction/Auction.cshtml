@@ -82,18 +82,19 @@
                             </tr>
                             <tr>
                                 <td><strong>Giá khởi điểm:</strong></td>
-                                <td class="text-danger fw-bold">@string.Format("{0:N0} VND", auction.IProduct?.DStartingPrice)</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Bắt đầu:</strong></td>
-                                <td>@auction.DtStartTime</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Kết thúc:</strong></td>
-                                <td>@auction.DtEndTime</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                <td class="text-danger fw-bold">@string.Format("{0:N0} VND",
+                                                                    auction.IProduct?.DStartingPrice)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bắt đầu:</strong></td>
+                            <td>@auction.DtStartTime</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kết thúc:</strong></td>
+                            <td>@auction.DtEndTime</td>
+                        </tr>
+                    </tbody>
+                </table>
 
                     <!-- Highest Bid -->
                     <p class="fs-5 mt-4">
@@ -109,11 +110,12 @@
 
                     <!-- BID FORM -->
                     <div class="input-group mt-3">
-                        <input type="number" class="form-control bid-input" id="bidAmount" placeholder="Nhập số tiền đấu giá" min="@((auction.DHighestBid ?? 0) + 1000)">
+                        <input type="number" class="form-control bid-input" id="bidAmount"
+                            placeholder="Nhập số tiền đấu giá" min="@((auction.DHighestBid ?? 0) + 1000)">
                         <button class="btn btn-success bid-btn" id="placeBidButton">Đấu giá</button>
                     </div>
                     <p id="validation1" class="text-danger mt-2"></p>
-                }
+                                }
                 else
                 {
                     <p>Không tìm thấy thông tin đấu giá.</p>
@@ -126,11 +128,11 @@
             <div class="info-card">
                 <h4 class="text-center fw-bold mb-3">LỊCH SỬ ĐẤU GIÁ</h4>
                 @{
-                    var auctionTransactions = ViewBag.AuctionTransactions as List<BTL_LTWNC.Models.TblTransaction>;
+                    var bidsHistory = ViewBag.AuctionBid;
                 }
 
                 <div id="historyTableContainer">
-                    @if (auctionTransactions != null && auctionTransactions.Any())
+                    @if (bidsHistory != null)
                     {
                         <table class="table table-bordered history-table">
                             <thead>
@@ -141,14 +143,14 @@
                                 </tr>
                             </thead>
                             <tbody id="historyTableBody">
-                                @foreach (var t in auctionTransactions)
+                                @foreach (TblBid tblBid in bidsHistory)
                                 {
                                     <tr>
-                                        <td>@t.Buyer?.SFullName</td>
+                                        <td>@tblBid.IBidder?.SFullName</td>
                                         <td class="text-danger fw-bold">
-                                            @String.Format("{0:N0} VND", t.DAmount)
+                                            @String.Format("{0:N0} VND", tblBid.DBidAmount)
                                         </td>
-                                        <td>@t.DtTransactionTime</td>
+                                        <td>@tblBid.DtBidTime</td>
                                     </tr>
                                 }
                             </tbody>
@@ -169,7 +171,7 @@
 <script>
     const endTime = new Date("@auction?.DtEndTime").getTime();
     const auctionId = @auction?.IAuctionId;
-
+    console.log('Auction ID from view:', auctionId);
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = endTime - now;
@@ -190,43 +192,36 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // Xử lý đấu giá
-    document.getElementById('placeBidButton').addEventListener('click', function() {
+    document.getElementById('placeBidButton').addEventListener('click', function () {
         const bidAmount = parseFloat(document.getElementById('bidAmount').value);
         const validation = document.getElementById('validation1');
-        
+
         if (!bidAmount || bidAmount <= 0) {
             validation.textContent = 'Vui lòng nhập số tiền hợp lệ.';
             return;
         }
 
         validation.textContent = '';
+        const formData = new FormData();
+        formData.append('auctionId', auctionId);
+        formData.append('bidAmount', bidAmount);
 
         fetch('/Auction/PlaceBid', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-            },
-            body: JSON.stringify({
-                auctionId: auctionId,
-                bidAmount: bidAmount
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    validation.textContent = data.message;
+                }
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                document.getElementById('highestBid').textContent = 
-                    new Intl.NumberFormat('vi-VN').format(data.newHighestBid) + ' VND';
-                location.reload();
-            } else {
-                validation.textContent = data.message;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            validation.textContent = 'Có lỗi xảy ra. Vui lòng thử lại.';
-        });
+            .catch(error => {
+                console.error('Error:', error);
+                validation.textContent = 'Có lỗi xảy ra.';
+            });
     });
 </script>

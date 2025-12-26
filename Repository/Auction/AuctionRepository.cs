@@ -39,10 +39,17 @@ namespace BTL_LTWNC.Repositories
         public async Task<TblAuction> GetByIdAsync(int id)
         {
 
-            return await _context.TblAuctions
-                .Include(a => a.IProduct)
-                .Include(a => a.IWinner)
-                .FirstOrDefaultAsync(a => a.IAuctionId == id);
+            var auction = await _context.TblAuctions
+            .Include(a => a.IProduct)
+            .FirstOrDefaultAsync(a => a.IAuctionId == id);
+
+            if (auction != null && auction.IWinnerId != null)
+            {
+                await _context.Entry(auction)
+                    .Reference(a => a.IWinner)
+                    .LoadAsync();
+            }
+            return auction;
         }
 
         public async Task AddAsync(TblAuction entity)
@@ -71,10 +78,19 @@ namespace BTL_LTWNC.Repositories
         {
             return await _context.TblTransactions
                 .Where(t => t.IAuctionId == auctionId)
-                .Include(t => t.Buyer) 
+                .Include(t => t.Buyer)
                 .Include(t => t.Auction)
                 .OrderByDescending(t => t.DtTransactionTime)
                 .ToListAsync();
+        }
+
+        public async Task<List<TblBid>> GetBidsByAuctionId(int auctionId)
+        {
+            return await _context.TblBids
+            .Where(b=>b.IAuctionId == auctionId)
+            .Include(b=>b.IBidder)
+            .OrderByDescending(b=>b.DtBidTime)
+            .ToListAsync();
         }
     }
 }

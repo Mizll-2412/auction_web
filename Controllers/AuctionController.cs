@@ -71,6 +71,7 @@ namespace BTL_LTWNC.Controllers
                 }
                 ViewBag.Auction = auction;
                 var bids = await _bidRepository.GetBidsByAuctionIdAsync(auction.IAuctionId);
+                ViewBag.AuctionBid = bids;
                 var transactions = await _transactionRepository.GetByIdAsync(auction.IAuctionId);
                 ViewBag.AuctionTransactions = transactions;
                 return View();
@@ -87,52 +88,56 @@ namespace BTL_LTWNC.Controllers
             var userJson = HttpContext.Session.GetString("UserSession");
             if (string.IsNullOrEmpty(userJson))
             {
-                return Json(new { success = false, message = "Vui lòng đăng nhập để đấu giá." });
+                return Json(new { success = false, message = "Vui lòng đăng nhập." });
             }
-            try
+
+            var user = JsonConvert.DeserializeObject<TblUser>(userJson);
+
+            var auction = await _context.TblAuctions.FindAsync(auctionId);
+
+            if (auction == null)
             {
-                var user = JsonConvert.DeserializeObject<TblUser>(userJson);
-                var auction = await _auctionRepository.GetByIdAsync(auctionId);
-                if (auction == null)
-                {
-                    return Json(new { success = false, message = "Phiên đấu giá không tồn tại." });
-                }
-                if (DateTime.Now < auction.DtStartTime)
-                {
-                    return Json(new { success = false, message = "Phiên đấu giá chưa bắt đầu." });
-                }
-                if (DateTime.Now > auction.DtEndTime)
-                {
-                    return Json(new { success = false, message = "Phiên đấu giá đã kết thúc." });
-                }
-                if (bidAmount <= auction.DHighestBid)
-                {
-                    return Json(new { success = false, message = "Giá đấu phải cao hơn giá hiện tại." });
-                }
-                var bid = new TblBid
-                {
-                    IAuctionId = auctionId,
-                    IBidderId = user.IUserId,
-                    DBidAmount = bidAmount,
-                    DtBidTime = DateTime.Now
-                };
-                await _bidRepository.AddAsync(bid);
-                auction.DHighestBid = bidAmount;
-                await _auctionRepository.UpdateAsync(auction);
-                var transaction = new TblTransaction
-                {
-                    IAuctionId = auctionId,
-                    IBuyerId = user.IUserId,
-                    DAmount = bidAmount,
-                    DtTransactionTime = DateTime.Now,
-                };
-                await _transactionRepository.AddAsync(transaction);
-                return Json(new { success = true, message = "Đấu giá thành công!", newHighestBid = bidAmount });
+                return Json(new { success = false, message = "Phiên đấu giá không tồn tại." });
             }
-            catch (Exception ex)
+
+            if (DateTime.Now < auction.DtStartTime)
             {
-                return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
+                return Json(new { success = false, message = "Chưa bắt đầu." });
             }
+
+            if (DateTime.Now > auction.DtEndTime)
+            {
+                return Json(new { success = false, message = "Đã kết thúc." });
+            }
+
+            if (bidAmount <= (auction.DHighestBid ?? 0))
+            {
+                return Json(new { success = false, message = $"Phải cao hơn {auction.DHighestBid:N0} VNĐ" });
+            }
+
+            var bid = new TblBid
+            {
+                IAuctionId = auctionId,
+                IBidderId = user.IUserId,
+                DBidAmount = bidAmount,
+                DtBidTime = DateTime.Now
+            };
+            _context.TblBids.Add(bid);
+
+            auction.DHighestBid = bidAmount;
+            _context.TblAuctions.Update(auction);
+
+            _context.TblTransactions.Add(new TblTransaction
+            {
+                IAuctionId = auctionId,
+                IBuyerId = user.IUserId,
+                DAmount = bidAmount,
+                DtTransactionTime = DateTime.Now
+            });
+
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Thành công!", newHighestBid = bidAmount });
         }
         [HttpGet]
         public async Task<IActionResult> CreateAuction(int productId)
