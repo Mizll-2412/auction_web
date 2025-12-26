@@ -81,8 +81,8 @@ namespace BTL_LTWNC.Controllers
                 return View("Error");
             }
         }
-         [HttpPost]
-        public async Task<IActionResult> PlaceBid (int auctionId, decimal bidAmount)
+        [HttpPost]
+        public async Task<IActionResult> PlaceBid(int auctionId, decimal bidAmount)
         {
             var userJson = HttpContext.Session.GetString("UserSession");
             if (string.IsNullOrEmpty(userJson))
@@ -99,7 +99,7 @@ namespace BTL_LTWNC.Controllers
                 }
                 if (DateTime.Now < auction.DtStartTime)
                 {
-                    return Json(new {success = false, message ="Phiên đấu giá chưa bắt đầu." });
+                    return Json(new { success = false, message = "Phiên đấu giá chưa bắt đầu." });
                 }
                 if (DateTime.Now > auction.DtEndTime)
                 {
@@ -128,10 +128,94 @@ namespace BTL_LTWNC.Controllers
                 };
                 await _transactionRepository.AddAsync(transaction);
                 return Json(new { success = true, message = "Đấu giá thành công!", newHighestBid = bidAmount });
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
             }
         }
-     }
+        [HttpGet]
+        public async Task<IActionResult> CreateAuction(int productId)
+        {
+            var userJson = HttpContext.Session.GetString("UserSession");
+            if (string.IsNullOrEmpty(userJson))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = JsonConvert.DeserializeObject<TblUser>(userJson);
+            if (user.SRole != "Quản trị viên")
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            try
+            {
+                var product = await _context.TblProducts
+                .Include(p => p.ISellerId)
+                .FirstOrDefaultAsync(p => p.IProductId == productId);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                var existingAuction = await _context.TblAuctions
+                .FirstOrDefaultAsync(a => a.IProductId == productId && a.SStatus != "Đã kết thúc");
+                if (existingAuction != null)
+                {
+                    TempData["ErrorMessage"] = "Sản phẩm này đã có cuộc đấu giá đang diễn ra";
+                    return RedirectToAction("ListProduct", "Product", new { categoryId = product.ICategoryId });
+                }
+                ViewBag.Product = product;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAuction(TblAuction auction)
+        {
+            var userJson = HttpContext.Session.GetString("UserSession");
+            if (string.IsNullOrEmpty(userJson))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            try
+            {
+                var user = JsonConvert.DeserializeObject<TblUser>(userJson);
+                if (auction.DtEndTime <= auction.DtStartTime)
+                {
+                    ViewBag.ErrorMessage = "Thời gian kết thúc phải sau thời gian bắt đầu";
+                    ViewBag.Product = await _context.TblProducts
+                    .Include(p => p.ISeller)
+                    .FirstOrDefaultAsync(p => p.IProductId == auction.IProductId);
+                    return View(auction);
+                }
+                var product = await _context.TblProducts.FindAsync(auction.IProductId);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                if (auction.DHighestBid == null || auction.DHighestBid == 0)
+                {
+                    auction.DHighestBid = product.DStartingPrice;
+                }
+                _context.TblAuctions.Add(auction);
+                await _context.SaveChangesAsync();
+                TempData["Message"] = "Tạo đấu giá thành công";
+                return RedirectToAction("ListProduct", "Product", new { categoryId = product.ICategoryId });
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Có lỗi xảy ra: " + ex.Message;
+                ViewBag.Product = await _context.TblProducts
+                    .Include(p => p.ISeller)
+                    .FirstOrDefaultAsync(p => p.IProductId == auction.IProductId);
+                return View(auction);
+            }
+        }
+
+    }
 }

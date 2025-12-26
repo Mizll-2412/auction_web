@@ -26,21 +26,22 @@
                     </a>
                     <a href="/Auction/Detail?productId=@product.IProductId" class="product-link">
                         <div class="product-info">
-                        <h3 class="product-title">@product.SProductName</h3>
-                        <div class="location-info">
-                            <span class="description">@product.SDescription</span>
-                            <span class="seller">Seller: @product.ISeller.SFullName</span>
+                            <h3 class="product-title">@product.SProductName</h3>
+                            <div class="location-info">
+                                <span class="description">@product.SDescription</span>
+                                <span class="seller">Seller: @product.ISeller.SFullName</span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="price">@product.DStartingPrice</span>
+                            </div>
                         </div>
-                        <div class="product-meta">
-                            <span class="price">@product.DStartingPrice</span>
-                        </div>
-                    </div>
                     </a>
 
                     @if (isAdmin)
                     {
                         <div class="product-actions">
-                            <a href="javascript:void(0)" class="btn btn-light" onclick="addAuction(@product.IProductId)">Tạo Đấu Giá</a>
+                            <a href="javascript:void(0)" class="btn btn-light" onclick="addAuction(@product.IProductId)">Tạo Đấu
+                                Giá</a>
                             <a href="javascript:void(0)" class="btn btn-edit" onclick="editProduct(@product.IProductId)">Sửa</a>
                             <form method="post" id="deleteForm-@product.IProductId" style="display:inline;">
                                 <button type="button" class="btn btn-delete"
@@ -84,7 +85,8 @@
     function editProduct(IProductId) {
         window.location.href = `@Url.Action("EditProduct", "Product")/${IProductId}`;
     }
-    function addAuction(IProductId){
+    function addAuction(IProductId) {
+        window.location.href = `@Url.Action("CreateAuction", "Auction")/${IProductId}`;
 
     }
 </script>
