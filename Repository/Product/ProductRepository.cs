@@ -91,5 +91,13 @@ namespace BTL_LTWNC.Repositories
                 }
             }
         }
+        public async Task<List<TblProduct>> GetProductsByUserAndCategory(int userId, int categoryId)
+        {
+            return await _context.TblProducts
+                .Where(p => p.ICategoryId == categoryId && p.ISellerId == userId)
+                .Include(p => p.ICategory)
+                .Include(p => p.ISeller)
+                .ToListAsync();
+        }
     }
 }

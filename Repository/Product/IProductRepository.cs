@@ -9,5 +9,7 @@ namespace BTL_LTWNC.Repositories
         Task AddAsync(TblProduct product);
         Task UpdateAsync(TblProduct product);
         Task DeleteAsync(int id);
+        Task<List<TblProduct>> GetProductsByUserAndCategory(int userId, int categoryId);
+
     }
 }
