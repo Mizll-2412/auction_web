@@ -151,7 +151,7 @@ namespace BTL_LTWNC.Controllers
             try
             {
                 var product = await _context.TblProducts
-                .Include(p => p.ISellerId)
+                .Include(p => p.ISeller)
                 .FirstOrDefaultAsync(p => p.IProductId == productId);
                 if (product == null)
                 {

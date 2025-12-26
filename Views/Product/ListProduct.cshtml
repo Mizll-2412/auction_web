@@ -86,7 +86,7 @@
         window.location.href = `@Url.Action("EditProduct", "Product")/${IProductId}`;
     }
     function addAuction(IProductId) {
-        window.location.href = `@Url.Action("CreateAuction", "Auction")/${IProductId}`;
+        window.location.href = `@Url.Action("CreateAuction", "Auction")?productId=${IProductId}`;
 
     }
 </script>
