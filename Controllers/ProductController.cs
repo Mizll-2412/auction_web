@@ -39,11 +39,19 @@ namespace BTL_LTWNC.Controllers
             {
                 var products = await _productRepository.GetProductsByCategory(categoryId);
                 var user = JsonConvert.DeserializeObject<TblUser>(userJson);
-                var myProducts = products.Where(p => p.ISellerId == user.IUserId).ToList();
                 ViewBag.CategoryId = categoryId;
                 
                 ViewBag.IsAdmin = user.SRole == "Quản trị viên";
-                return View(myProducts);
+                if (user.SRole == "Quản trị viên")
+                {
+                    var myProducts = products.Where(p => p.ISellerId == user.IUserId).ToList();
+                    return View(myProducts);
+
+                }
+                else
+                {
+                     return View(products);
+                }
             }
             catch (Exception ex)
             {
