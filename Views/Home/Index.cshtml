@@ -108,7 +108,21 @@
 <script>
     document.querySelectorAll(".category-link").forEach(el => {
         el.addEventListener("click", function () {
+            event.preventDefault();
+            if (!isLoggedIn) {
+                const loginModal = new bootstrap.Modal(
+                    document.getElementById("loginModal")
+                );
+                loginModal.show();
+                return;
+            }
 
+            window.location.href = this.dataset.url;
+        });
+    });
+    document.querySelectorAll(".auction-card").forEach(el => {
+        el.addEventListener("click", function () {
+            event.preventDefault();
             if (!isLoggedIn) {
                 const loginModal = new bootstrap.Modal(
                     document.getElementById("loginModal")
@@ -141,7 +155,7 @@
             const s = Math.floor((distance % (1000 * 60)) / 1000);
 
             document.getElementById(elementId).innerHTML =
-                `⏳ ${h} giờ ${m} phút ${s} giây`;
+                `${h} giờ ${m} phút ${s} giây`;
         }, 1000);
     }
 </script>
