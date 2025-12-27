@@ -57,6 +57,48 @@
         </div>
     </div>
 
+             <!-- ==== SẮP  DIỄN RA ==== -->
+    <section class="mb-5">
+        <h4 class="fw-bold">Đấu giá sắp diễn ra</h4>
+        <p class="text-muted small"><i>@ViewBag.UpcomingAuctions?.Count tài sản</i></p>
+
+        <div class="row g-4">
+            @if (ViewBag.UpcomingAuctions != null)
+            {
+                foreach (var auction in ViewBag.UpcomingAuctions)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                        <a href="@Url.Action("Detail", "Auction", 
+                                                              new { productId = auction.IProductId })" class="text-decoration-none text-dark">
+
+                    <div class="card auction-card shadow-sm">
+                        <img src="@auction.IProduct?.SImageUrl" loading="lazy" class="auction-img">
+
+                                <div class="card-body">
+                                    <h5 class="fw-bold">@auction.IProduct.SProductName</h5>
+
+                                    <p class="text-danger fw-semibold">
+                                        Giá khởi điểm: @auction.IProduct.DStartingPrice VND
+                                    </p>
+
+                                    <p class="text-muted small mb-1">
+                                        Bắt đầu: @auction.DtStartTime <br />
+                                        Kết thúc: @auction.DtEndTime
+                                    </p>
+
+                                    <p class="countdown" id="cd-@auction.IAuctionId"></p>
+
+                                    <script>
+                                        countdown("@auction.DtEndTime", "cd-@auction.IAuctionId");
+                                    </script>
+                                </div>
+                            </div>
+
+                        </a>
+                    </div>
+                }
+            }
+        </div>
     <!-- ==== ĐANG DIỄN RA ==== -->
     <section class="mb-5">
         <h4 class="fw-bold">Đấu giá đang diễn ra</h4>
@@ -69,7 +111,49 @@
                 {
                     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
                         <a href="@Url.Action("Detail", "Auction", 
-                                   new { productId = auction.IProductId })" class="text-decoration-none text-dark">
+                                                              new { productId = auction.IProductId })" class="text-decoration-none text-dark">
+
+                    <div class="card auction-card shadow-sm">
+                        <img src="@auction.IProduct?.SImageUrl" loading="lazy" class="auction-img">
+
+                                <div class="card-body">
+                                    <h5 class="fw-bold">@auction.IProduct.SProductName</h5>
+
+                                    <p class="text-danger fw-semibold">
+                                        Giá khởi điểm: @auction.IProduct.DStartingPrice VND
+                                    </p>
+
+                                    <p class="text-muted small mb-1">
+                                        Bắt đầu: @auction.DtStartTime <br />
+                                        Kết thúc: @auction.DtEndTime
+                                    </p>
+
+                                    <p class="countdown" id="cd-@auction.IAuctionId"></p>
+
+                                    <script>
+                                        countdown("@auction.DtEndTime", "cd-@auction.IAuctionId");
+                                    </script>
+                                </div>
+                            </div>
+
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+         <!-- ==== ĐÃ DIỄN RA ==== -->
+    <section class="mb-5">
+        <h4 class="fw-bold">Đấu giá đã diễn ra</h4>
+        <p class="text-muted small"><i>@ViewBag.PastAuctions?.Count tài sản</i></p>
+
+        <div class="row g-4">
+            @if (ViewBag.PastAuctions != null)
+            {
+                foreach (var auction in ViewBag.PastAuctions)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                        <a href="@Url.Action("Detail", "Auction", 
+                                                              new { productId = auction.IProductId })" class="text-decoration-none text-dark">
 
                     <div class="card auction-card shadow-sm">
                         <img src="@auction.IProduct?.SImageUrl" loading="lazy" class="auction-img">
@@ -120,18 +204,16 @@
             window.location.href = this.dataset.url;
         });
     });
-    document.querySelectorAll(".auction-card").forEach(el => {
-        el.addEventListener("click", function () {
-            event.preventDefault();
+    document.querySelectorAll("a:has(.auction-card)").forEach(el => {
+        el.addEventListener("click", function (e) {
+            e.preventDefault();
+
             if (!isLoggedIn) {
-                const loginModal = new bootstrap.Modal(
-                    document.getElementById("loginModal")
-                );
-                loginModal.show();
+                new bootstrap.Modal(document.getElementById("loginModal")).show();
                 return;
             }
 
-            window.location.href = this.dataset.url;
+            window.location.href = this.href;
         });
     });
 </script>
