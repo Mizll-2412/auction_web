@@ -28,7 +28,7 @@
             <div class="product-preview-info">
                 <h3>@product.SProductName</h3>
                 <p>@product.SDescription</p>
-                <span class="starting-price">Giá khởi điểm: @product.DStartingPrice.ToString("N0") VNĐ</span>
+                <span class="starting-price">Giá khởi điểm: @product..DStartingPrice ?? 0).ToString("N0")) VNĐ</span>
             </div>
         </div>
     }

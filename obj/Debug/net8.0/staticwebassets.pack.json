@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\css\\Account\\trangcanhan.css"
     },
     {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\Auction\\auction.css",
+      "PackagePath": "staticwebassets\\css\\Auction\\auction.css"
+    },
+    {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\Home\\product-form.css",
       "PackagePath": "staticwebassets\\css\\Home\\product-form.css"
     },

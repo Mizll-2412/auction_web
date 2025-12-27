@@ -1,3 +1,13 @@
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.csproj.AssemblyReference.cache
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.GeneratedMSBuildEditorConfig.editorconfig
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.AssemblyInfoInputs.cache
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.AssemblyInfo.cs
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.csproj.CoreCompileInputs.cache
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.MvcApplicationPartsAssemblyInfo.cs
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.MvcApplicationPartsAssemblyInfo.cache
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.RazorAssemblyInfo.cache
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.RazorAssemblyInfo.cs
+D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.sourcelink.json
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\appsettings.Development.json
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\appsettings.json
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\BTL_LTWNC.staticwebassets.runtime.json
@@ -38,6 +48,7 @@ D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.CodeDom.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Composition.AttributedModel.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Composition.Convention.dll
@@ -52,6 +63,8 @@ D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Runtime.Caching.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Security.Permissions.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Windows.Extensions.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\X.PagedList.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\X.PagedList.Mvc.Core.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\es\Microsoft.CodeAnalysis.resources.dll
@@ -116,14 +129,6 @@ D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Drawing.
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.csproj.AssemblyReference.cache
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.GeneratedMSBuildEditorConfig.editorconfig
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.AssemblyInfoInputs.cache
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.AssemblyInfo.cs
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.csproj.CoreCompileInputs.cache
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.MvcApplicationPartsAssemblyInfo.cache
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.RazorAssemblyInfo.cache
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.RazorAssemblyInfo.cs
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\staticwebassets.build.json
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\staticwebassets.development.json
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\staticwebassets\msbuild.BTL_LTWNC.Microsoft.AspNetCore.StaticWebAssets.props
@@ -140,8 +145,3 @@ D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\refint\BTL_LTWNC.dll
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.pdb
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.genruntimeconfig.cache
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\ref\BTL_LTWNC.dll
-D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Newtonsoft.Json.dll
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.MvcApplicationPartsAssemblyInfo.cs
-D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\X.PagedList.dll
-D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\X.PagedList.Mvc.Core.dll
-D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.sourcelink.json

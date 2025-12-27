@@ -222,5 +222,68 @@ namespace BTL_LTWNC.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EndAuctionEarly(int auctionId)
+        {
+            var userJson = HttpContext.Session.GetString("UserSession");
+            if (string.IsNullOrEmpty(userJson))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = JsonConvert.DeserializeObject<TblUser>(userJson);
+            if (user.SRole != "Quản trị viên")
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            try
+            {
+                var auction = await _context.TblAuctions
+           .Include(a => a.IProduct)
+           .FirstOrDefaultAsync(a => a.IAuctionId == auctionId);
+
+                if (auction == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy phiên đấu giá." });
+                }
+
+                if (auction.SStatus == "Đã kết thúc")
+                {
+                    return Json(new { success = false, message = "Phiên đấu giá đã kết thúc rồi." });
+                }
+                var highestBid = await _context.TblBids
+                    .Where(b => b.IAuctionId == auctionId)
+                    .OrderByDescending(b => b.DBidAmount)
+                    .FirstOrDefaultAsync();
+
+                auction.SStatus = "Đã kết thúc";
+                auction.DtEndTime = DateTime.Now;
+
+                if (highestBid != null)
+                {
+                    auction.DHighestBid = highestBid.DBidAmount;
+                    auction.IWinnerId = highestBid.IBidderId;
+                }
+                else
+                {
+                    auction.DHighestBid = auction.IProduct?.DStartingPrice ?? 0;
+                    auction.IWinnerId = null;
+                }
+
+                await _context.SaveChangesAsync();
+
+                string message = highestBid != null
+                    ? $"Đã kết thúc đấu giá sớm! Người thắng cuộc: {highestBid.IBidder?.SFullName}"
+                    : "Đã kết thúc đấu giá sớm! Không có người thắng cuộc.";
+
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
+            }
+        }
     }
+
 }
+

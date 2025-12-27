@@ -29,7 +29,7 @@
                     <td style="display: none;">@watchlist.IWatchlistId</td>
                     <td>@watchlist.IProduct?.SProductName</td>
                     <td>@watchlist.IProduct?.SDescription</td>
-                    <td>@watchlist.IProduct?.DStartingPrice.ToString("N0") VND</td>
+                    <td>@((watchlist.IProduct?.DStartingPrice ?? 0).ToString("N0")) VND</td>
                     <td>@watchlist.IProduct?.ISeller?.SFullName</td>
                     <td>
                         @Html.AntiForgeryToken()
