@@ -1,9 +1,9 @@
-.notification-icon[b-cdi0s0afib] {
+.notification-icon {
   position: relative;
   cursor: pointer;
 }
 
-.notification-badge[b-cdi0s0afib] {
+.notification-badge {
   position: absolute;
   top: -8px;
   right: -8px;
@@ -17,7 +17,7 @@
   text-align: center;
 }
 
-.notification-dropdown[b-cdi0s0afib] {
+.notification-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
@@ -31,11 +31,11 @@
   display: none;
 }
 
-.notification-dropdown.show[b-cdi0s0afib] {
+.notification-dropdown.show {
   display: block;
 }
 
-.notification-header[b-cdi0s0afib] {
+.notification-header {
   padding: 15px;
   border-bottom: 1px solid #eee;
   font-weight: bold;
@@ -46,71 +46,71 @@
   align-items: center;
 }
 
-.notification-item[b-cdi0s0afib] {
+.notification-item {
   padding: 12px 15px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.notification-item:hover[b-cdi0s0afib] {
+.notification-item:hover {
   background: #f8f9fa;
 }
 
-.notification-item.unread[b-cdi0s0afib] {
+.notification-item.unread {
   background: #e3f2fd;
 }
 
-.notification-item.unread:hover[b-cdi0s0afib] {
+.notification-item.unread:hover {
   background: #bbdefb;
 }
 
-.notification-title[b-cdi0s0afib] {
+.notification-title {
   font-weight: 600;
   color: #333;
   margin-bottom: 4px;
 }
 
-.notification-message[b-cdi0s0afib] {
+.notification-message {
   font-size: 13px;
   color: #666;
   margin-bottom: 4px;
 }
 
-.notification-time[b-cdi0s0afib] {
+.notification-time {
   font-size: 11px;
   color: #999;
 }
 
-.notification-empty[b-cdi0s0afib] {
+.notification-empty {
   padding: 40px 20px;
   text-align: center;
   color: #999;
 }
 
-.notification-footer[b-cdi0s0afib] {
+.notification-footer {
   padding: 12px;
   text-align: center;
   border-top: 1px solid #eee;
 }
 
-.notification-footer a[b-cdi0s0afib] {
+.notification-footer a {
   color: #007bff;
   text-decoration: none;
   font-size: 14px;
 }
 
-.notification-footer a:hover[b-cdi0s0afib] {
+.notification-footer a:hover {
   text-decoration: underline;
 }
 
-.mark-all-read[b-cdi0s0afib] {
+.mark-all-read {
   color: #007bff;
   font-size: 13px;
   cursor: pointer;
   font-weight: normal;
 }
 
-.mark-all-read:hover[b-cdi0s0afib] {
+.mark-all-read:hover {
   text-decoration: underline;
 }

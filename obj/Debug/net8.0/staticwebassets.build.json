@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "//L7zb5lOQvU8DtaZMLXTlWEzLwDYtF8xZjjuNPFB1A=",
+  "Hash": "105cHvrKK+qZajd/jhrifjPb/cdM2EbIX3+3nyIfGso=",
   "Source": "BTL_LTWNC",
   "BasePath": "_content/BTL_LTWNC",
   "Mode": "Default",
@@ -205,6 +205,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\Home\\trangchu.css"
+    },
+    {
+      "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\layout.css",
+      "SourceId": "BTL_LTWNC",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\",
+      "BasePath": "_content/BTL_LTWNC",
+      "RelativePath": "css/layout.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\layout.css"
     },
     {
       "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\site.css",

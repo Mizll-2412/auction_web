@@ -37,6 +37,10 @@
       "PackagePath": "staticwebassets\\css\\auction.css"
     },
     {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\layout.css",
+      "PackagePath": "staticwebassets\\css\\layout.css"
+    },
+    {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
