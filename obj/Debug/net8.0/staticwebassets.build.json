@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "dmL91a9JP5agn4taubW5JdIW4x8g89Vwz1eJiwrV3Mc=",
+  "Hash": "//L7zb5lOQvU8DtaZMLXTlWEzLwDYtF8xZjjuNPFB1A=",
   "Source": "BTL_LTWNC",
   "BasePath": "_content/BTL_LTWNC",
   "Mode": "Default",
@@ -281,6 +281,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\_Layout.js",
+      "SourceId": "BTL_LTWNC",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\",
+      "BasePath": "_content/BTL_LTWNC",
+      "RelativePath": "js/_Layout.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\_Layout.js"
     },
     {
       "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\Account\\DangKy.js",

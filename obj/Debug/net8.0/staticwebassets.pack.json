@@ -61,6 +61,10 @@
       "PackagePath": "staticwebassets\\js\\Account\\DangNhap.js"
     },
     {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\_Layout.js",
+      "PackagePath": "staticwebassets\\js\\_Layout.js"
+    },
+    {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\home\\product.js",
       "PackagePath": "staticwebassets\\js\\home\\product.js"
     },
