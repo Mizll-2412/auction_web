@@ -47,4 +47,7 @@ public partial class TblUser
     public virtual ICollection<TblTransaction> TblTransactions { get; set; } = new List<TblTransaction>();
 
     public virtual ICollection<TblWatchlist> TblWatchlists { get; set; } = new List<TblWatchlist>();
+    public virtual ICollection<TblNotification> TblNotificationsReceived { get; set; } = new List<TblNotification>();  
+    public virtual ICollection<TblNotification> TblNotificationsSent  { get; set; } = new List<TblNotification>(); 
+
 }

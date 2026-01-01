@@ -43,6 +43,8 @@ public partial class TblProduct
 
     public virtual ICollection<TblReview> TblReviews { get; set; } = new List<TblReview>();
     public virtual ICollection<TblWatchlist> TblWatchlists { get; set; } = new List<TblWatchlist>();
+    public virtual ICollection<TblNotification> TblNotifications { get; set; } = new List<TblNotification>();
+
 
 }
   
