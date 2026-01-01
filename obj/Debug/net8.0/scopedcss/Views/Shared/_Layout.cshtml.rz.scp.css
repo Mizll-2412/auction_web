@@ -1,116 +1,145 @@
-.notification-icon[b-cdi0s0afib] {
-  position: relative;
-  cursor: pointer;
-}
+/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
 
-.notification-badge[b-cdi0s0afib] {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #dc3545;
-  color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 11px;
-  font-weight: bold;
-  min-width: 18px;
+a.navbar-brand[b-cdi0s0afib] {
+  white-space: normal;
   text-align: center;
+  word-break: break-all;
 }
 
-.notification-dropdown[b-cdi0s0afib] {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  width: 350px;
-  max-height: 400px;
-  overflow-y: auto;
-  z-index: 1050;
-  display: none;
+a[b-cdi0s0afib] {
+  color: #0077cc;
 }
 
-.notification-dropdown.show[b-cdi0s0afib] {
-  display: block;
+.btn-primary[b-cdi0s0afib] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
 }
 
-.notification-header[b-cdi0s0afib] {
-  padding: 15px;
-  border-bottom: 1px solid #eee;
+.nav-pills .nav-link.active[b-cdi0s0afib], .nav-pills .show > .nav-link[b-cdi0s0afib] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-cdi0s0afib] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-cdi0s0afib] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-cdi0s0afib] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-cdi0s0afib] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+
+.footer[b-cdi0s0afib] {
+  background-color: #AF4552;
+  color: #ffffff;
+  padding: 40px 0;
+  font-family: Arial, sans-serif;
+}
+
+.footer-container[b-cdi0s0afib] {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.company-info h2[b-cdi0s0afib] {
+  font-size: 20px;
+  margin-bottom: 20px;
   font-weight: bold;
-  font-size: 16px;
-  color: #333;
+}
+
+.contact-details[b-cdi0s0afib] {
+  margin-bottom: 30px;
+}
+
+.contact-details p[b-cdi0s0afib] {
+  margin-bottom: 10px;
   display: flex;
-  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.contact-details i[b-cdi0s0afib] {
+  width: 20px;
+  color: #ffffff;
+}
+
+.registration-info p[b-cdi0s0afib] {
+  margin-bottom: 8px;
+  display: flex;
   align-items: center;
+  gap: 10px;
 }
 
-.notification-item[b-cdi0s0afib] {
-  padding: 12px 15px;
-  border-bottom: 1px solid #f0f0f0;
+.registration-info i[b-cdi0s0afib] {
+  width: 20px;
+  color: #ffffff;
+}
+
+.help-section h2[b-cdi0s0afib] {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.help-section ul[b-cdi0s0afib] {
+  list-style: none;
+}
+
+.help-section li[b-cdi0s0afib] {
+  margin-bottom: 12px;
+  transition: color 0.3s;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-.notification-item:hover[b-cdi0s0afib] {
-  background: #f8f9fa;
+.help-section li:hover[b-cdi0s0afib] {
+  color: #FFD700;
 }
 
-.notification-item.unread[b-cdi0s0afib] {
-  background: #e3f2fd;
-}
-
-.notification-item.unread:hover[b-cdi0s0afib] {
-  background: #bbdefb;
-}
-
-.notification-title[b-cdi0s0afib] {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 4px;
-}
-
-.notification-message[b-cdi0s0afib] {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.notification-time[b-cdi0s0afib] {
-  font-size: 11px;
-  color: #999;
-}
-
-.notification-empty[b-cdi0s0afib] {
-  padding: 40px 20px;
-  text-align: center;
-  color: #999;
-}
-
-.notification-footer[b-cdi0s0afib] {
-  padding: 12px;
-  text-align: center;
-  border-top: 1px solid #eee;
-}
-
-.notification-footer a[b-cdi0s0afib] {
-  color: #007bff;
-  text-decoration: none;
+.footer-bottom[b-cdi0s0afib] {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 14px;
+  text-align: center;
+  grid-column: 1 / -1;
 }
 
-.notification-footer a:hover[b-cdi0s0afib] {
-  text-decoration: underline;
+@media (max-width: 1024px) {
+  .category-grid[b-cdi0s0afib] {
+      grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.mark-all-read[b-cdi0s0afib] {
-  color: #007bff;
-  font-size: 13px;
-  cursor: pointer;
-  font-weight: normal;
+@media (max-width: 768px) {
+  .category-grid[b-cdi0s0afib] {
+      grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-container[b-cdi0s0afib] {
+      grid-template-columns: 1fr;
+  }
 }
 
-.mark-all-read:hover[b-cdi0s0afib] {
-  text-decoration: underline;
+@media (max-width: 480px) {
+  .container[b-cdi0s0afib] {
+      padding: 10px;
+  }
+  
+  .category-section[b-cdi0s0afib] {
+      padding: 15px;
+  }
 }
