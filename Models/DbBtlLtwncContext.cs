@@ -26,6 +26,7 @@ public partial class DbBtlLtwncContext : DbContext
     public virtual DbSet<TblReview> TblReviews { get; set; }
 
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
+    public virtual DbSet<TblNotification> TblNotifications { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
 
@@ -142,6 +143,48 @@ public partial class DbBtlLtwncContext : DbContext
                 .HasForeignKey(d => d.ISellerId)
                 .HasConstraintName("FK__tblProduc__iSell__4D94879B");
         });
+        modelBuilder.Entity<TblNotification>(entity =>
+        {
+            entity.HasKey(e => e.iNotificationId);
+
+            entity.ToTable("tblNotifications");
+
+            entity.Property(e => e.iNotificationId).HasColumnName("iNotificationId");
+            entity.Property(e => e.iUserId).HasColumnName("iUserId");
+            entity.Property(e => e.iSenderId).HasColumnName("iSenderId");
+            entity.Property(e => e.iAuctionId).HasColumnName("iAuctionId");
+            entity.Property(e => e.iProductId).HasColumnName("iProductId");
+
+            entity.Property(e => e.sTitle).HasColumnName("sTitle");
+            entity.Property(e => e.SMessage).HasColumnName("sMessage");
+            entity.Property(e => e.SType).HasColumnName("sType");
+            entity.Property(e => e.SUrl).HasColumnName("sUrl");
+
+            entity.Property(e => e.BIsRead)
+                .HasDefaultValue(false)
+                .HasColumnName("bIsRead");
+
+            entity.Property(e => e.DtCreatedTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("dtCreatedTime");
+
+            entity.HasOne(d => d.IUser)
+                .WithMany(p => p.TblNotificationsReceived)
+                .HasForeignKey(d => d.iUserId);
+
+            entity.HasOne(d => d.ISender)
+                .WithMany(p => p.TblNotificationsSent)
+                .HasForeignKey(d => d.iSenderId);
+
+            entity.HasOne(d => d.IAuction)
+                .WithMany(p => p.TblNotifications)
+                .HasForeignKey(d => d.iAuctionId);
+
+            entity.HasOne(d => d.IProduct)
+                .WithMany(p => p.TblNotifications)
+                .HasForeignKey(d => d.iProductId);
+        });
+
 
         modelBuilder.Entity<TblReview>(entity =>
         {
@@ -195,6 +238,7 @@ public partial class DbBtlLtwncContext : DbContext
                 .HasForeignKey(d => d.IBuyerId)
                 .HasConstraintName("FK__tblTransa__iBuye__5CD6CB2B");
         });
+        
 
         modelBuilder.Entity<TblUser>(entity =>
         {

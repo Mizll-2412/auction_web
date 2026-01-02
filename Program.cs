@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using BTL_LTWNC.Models;
 using BTL_LTWNC.Repositories;
+using BTL_LTWNC.Repositories.Notification;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +36,7 @@ builder.Services.AddScoped<IBidRepository, BidRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-builder.Services.AddScoped<NotificationService>();
+// builder.Services.AddScoped<NotificationService>();
 
 
 var app = builder.Build();

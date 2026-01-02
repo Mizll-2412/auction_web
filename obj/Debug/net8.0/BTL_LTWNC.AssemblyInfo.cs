@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BTL_LTWNC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4dc189fd80405459f19f1750436c261a18ca1966")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d834cf0f8116357918050599fef68b9bdedbcc36")]
 [assembly: System.Reflection.AssemblyProductAttribute("BTL_LTWNC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BTL_LTWNC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

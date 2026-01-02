@@ -6,21 +6,22 @@ namespace BTL_LTWNC.Repositories.Notification
     public class NotificationRepository : INotificationRepository
     {
         private readonly DbBtlLtwncContext _context;
+        
         public NotificationRepository(DbBtlLtwncContext context)
         {
             _context = context;
         }
 
-        async Task<TblNotification> INotificationRepository.CreateNotificationAsync(TblNotification notification)
+        public async Task<TblNotification> CreateNotificationAsync(TblNotification notification)
         {
             notification.DtCreatedTime = DateTime.Now;
             notification.BIsRead = false;
-            _context.TblNotification.Add(notification);
+            _context.TblNotifications.Add(notification);
             await _context.SaveChangesAsync();
             return notification;
         }
 
-        Task<bool> INotificationRepository.CreateNotificationsAsync(List<TblNotification> notifications)
+        public async Task<bool> CreateNotificationsAsync(List<TblNotification> notifications)
         {
             try
             {
@@ -39,13 +40,13 @@ namespace BTL_LTWNC.Repositories.Notification
             }
         }
 
-        async Task<bool> INotificationRepository.DeleteAllNotificationsAsync(int userId)
+        public async Task<bool> DeleteAllNotificationsAsync(int userId)
         {
             try
             {
-                var notifications = await _context.TblNotification
-                                    .Where(n => n.IUserId == userId).ToListAsync();
-                _context.TblNotification.Remove(notifications);
+                var notifications = await _context.TblNotifications
+                    .Where(n => n.iUserId == userId).ToListAsync();
+                _context.TblNotifications.RemoveRange(notifications);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -55,33 +56,34 @@ namespace BTL_LTWNC.Repositories.Notification
             }
         }
 
-        async Task<bool> INotificationRepository.DeleteNotificationAsync(int notificationId)
+        public async Task<bool> DeleteNotificationAsync(int notificationId)
         {
             try
             {
-                var noti = await _context.TblNotification.FindAsync(notificationId);
+                var noti = await _context.TblNotifications.FindAsync(notificationId);
                 if (noti != null)
                 {
-                    _context.TblNotification.Remove(noti);
+                    _context.TblNotifications.Remove(noti);
                     await _context.SaveChangesAsync();
                     return true;
                 }
                 return false;
-            }catch
+            }
+            catch
             {
                 return false;
             }
         }
 
-        async Task<bool> INotificationRepository.DeleteOldNotificationsAsync(int days=30)
+        public async Task<bool> DeleteOldNotificationsAsync(int days = 30)
         {
             try
             {
                 var cutoffDate = DateTime.Now.AddDays(-days);
-                var oldNotification = await _context.TblNotification
-                .Where(n => n.DtCreatedTime < cutoffDate && n.BIsRead)
-                .ToListAsync();
-                _context.TblNotification.Remove(oldNotification);
+                var oldNotification = await _context.TblNotifications
+                    .Where(n => n.DtCreatedTime < cutoffDate && n.BIsRead)
+                    .ToListAsync();
+                _context.TblNotifications.RemoveRange(oldNotification);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -91,68 +93,70 @@ namespace BTL_LTWNC.Repositories.Notification
             }
         }
 
-        async Task<List<TblNotification>> INotificationRepository.GetAllNotificationsByUserIdAsync(int userId)
+        public async Task<List<TblNotification>> GetAllNotificationsByUserIdAsync(int userId)
         {
-            return await _context.TblNotification
-            .Include(n => n.ISender)
-            .Include(n => n.IAuction)
-            .Include(n => n.IProduct)
-            .Where(n => n.IUserId == userId)
-            .ToListAsync();
+            return await _context.TblNotifications
+                .Include(n => n.ISender)
+                .Include(n => n.IAuction)
+                .Include(n => n.IProduct)
+                .Where(n => n.iUserId == userId)
+                .OrderByDescending(n => n.DtCreatedTime)
+                .ToListAsync();
         }
 
-        async Task<TblNotification?> INotificationRepository.GetNotificationByIdAsync(int notificationId)
+        public async Task<TblNotification?> GetNotificationByIdAsync(int notificationId)
         {
-            return await _context.TblNotification
-            .Include(n => n.ISender)
-            .Include(n => n.IAuction)
-            .Include(n => n.IProduct)
-            .FirstOrDefaultAsync(n => n.iNotificationId == notificationId);
+            return await _context.TblNotifications
+                .Include(n => n.ISender)
+                .Include(n => n.IAuction)
+                .Include(n => n.IProduct)
+                .FirstOrDefaultAsync(n => n.iNotificationId == notificationId);
         }
 
-        async Task<List<TblNotification>> INotificationRepository.GetNotificationsByTypeAsync(int userId, string type)
+        public async Task<List<TblNotification>> GetNotificationsByTypeAsync(int userId, string type)
         {
-            return await _context.TblNotification
-            .Include(n => n.ISender)
-            .Include(n => n.IAuction)
-            .Include(n => n.IProduct)
-            .Where(n => n.IUserId == userId && n.SType = type)
-            .OrderByDescending(n => n.DtCreatedTime)
-            .ToListAsync();
+            return await _context.TblNotifications
+                .Include(n => n.ISender)
+                .Include(n => n.IAuction)
+                .Include(n => n.IProduct)
+                .Where(n => n.iUserId == userId && n.SType == type)
+                .OrderByDescending(n => n.DtCreatedTime)
+                .ToListAsync();
         }
 
-        async Task<List<TblNotification>> INotificationRepository.GetNotificationsByUserIdAsync(int userId, int take)
+        public async Task<List<TblNotification>> GetNotificationsByUserIdAsync(int userId, int take = 10)
         {
-            return await _context.TblNotification
-            .Include(n => n.ISender)
-            .Include(n => n.IAuction)
-            .Include(n => n.IProduct)
-            .Where(n => n.IUserId == userId)
-            .OrderByDescending(n => n.DtCreatedTime)
-            .Take(take)
-            .ToListAsync();
+            return await _context.TblNotifications
+                .Include(n => n.ISender)
+                .Include(n => n.IAuction)
+                .Include(n => n.IProduct)
+                .Where(n => n.iUserId == userId)
+                .OrderByDescending(n => n.DtCreatedTime)
+                .Take(take)
+                .ToListAsync();
         }
 
-        async Task<int> INotificationRepository.GetUnreadCountAsync(int userId)
+        public async Task<int> GetUnreadCountAsync(int userId)
         {
-            return await _context.TblNotification.CountAsync(n => n.IUserId == userId && !n.BIsRead);
+            return await _context.TblNotifications
+                .CountAsync(n => n.iUserId == userId && !n.BIsRead);
         }
 
-        async Task<bool> INotificationRepository.HasNewNotificationsAsync(int userId, DateTime since)
+        public async Task<bool> HasNewNotificationsAsync(int userId, DateTime since)
         {
-            return await _context.TblNotification
-                        .AnyAsync(n => n.IUserId == userId 
-                                && n.DtCreatedTime < since && !n.BIsRead);
+            return await _context.TblNotifications
+                .AnyAsync(n => n.iUserId == userId 
+                    && n.DtCreatedTime > since && !n.BIsRead);
         }
 
-        async Task<bool> INotificationRepository.MarkAllAsReadAsync(int userId)
+        public async Task<bool> MarkAllAsReadAsync(int userId)
         {
             try
             {
-                var notifications = await _context.TblNotification
-                .Where(n => n.IUserId == userId && !n.BIsRead)
-                .ToListAsync();
-                foreach( var noti in notifications)
+                var notifications = await _context.TblNotifications
+                    .Where(n => n.iUserId == userId && !n.BIsRead)
+                    .ToListAsync();
+                foreach (var noti in notifications)
                 {
                     noti.BIsRead = true;
                 }
@@ -165,12 +169,12 @@ namespace BTL_LTWNC.Repositories.Notification
             }
         }
 
-        async Task<bool> INotificationRepository.MarkAsReadAsync(int notificationId)
+        public async Task<bool> MarkAsReadAsync(int notificationId)
         {
             try
             {
-                var noti = await _context.TblNotification.FindAsync(notificationId);
-                if(noti != null)
+                var noti = await _context.TblNotifications.FindAsync(notificationId);
+                if (noti != null)
                 {
                     noti.BIsRead = true;
                     await _context.SaveChangesAsync();
