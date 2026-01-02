@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
+using BTL_LTWNC.Repositories.Notification;
 
 namespace BTL_LTWNC.Controllers
 {
@@ -13,16 +14,22 @@ namespace BTL_LTWNC.Controllers
         private readonly IAuctionRepository _auctionRepository;
         private readonly IBidRepository _bidRepository;
         private readonly ITransactionRepository _transactionRepository;
+        private readonly NotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepo;
+
         private readonly DbBtlLtwncContext _context;
 
         public AuctionController(IAuctionRepository auctionRepository
-        , IBidRepository bidRepository, ITransactionRepository transactionRepository, DbBtlLtwncContext context)
+        , IBidRepository bidRepository, ITransactionRepository transactionRepository
+        , DbBtlLtwncContext context, NotificationService notificationService, INotificationRepository notificationRepo)
 
         {
             _auctionRepository = auctionRepository;
             _bidRepository = bidRepository;
             _transactionRepository = transactionRepository;
             _context = context;
+            _notificationService = notificationService;
+            _notificationRepo = notificationRepo;
 
         }
 
@@ -114,6 +121,11 @@ namespace BTL_LTWNC.Controllers
             {
                 return Json(new { success = false, message = $"Phải cao hơn {auction.DHighestBid:N0} VNĐ" });
             }
+            var previousHighestBid = await _context.TblBids
+                                    .Include(b => b.IBidder)
+                                    .Where(b => b.IAuctionId == auctionId)
+                                    .OrderByDescending(b => b.DBidAmount)
+                                    .FirstOrDefaultAsync();
 
             var bid = new TblBid
             {
@@ -136,6 +148,30 @@ namespace BTL_LTWNC.Controllers
             });
 
             await _context.SaveChangesAsync();
+            if (auction.IProduct?.ISellerId != null && auction.IProduct.ISellerId != user.IUserId)
+            {
+                await _notificationService.NotifyNewBid(
+                  sellerId: auction.IProduct.ISellerId.Value,
+                  bidderId: user.IUserId,
+                  auctionId: auctionId,
+                  productId: auction.IProductId.Value,
+                  bidderName: user.SFullName,
+                  bidAmount: bidAmount,
+                  productName: auction.IProduct.SProductName
+              );
+            }
+            if (previousHighestBid != null && previousHighestBid.IBidderId != user.IUserId)
+            {
+                await _notificationService.NotifyOutbid(
+                    oldBidderId: previousHighestBid.IBidderId.Value,
+                    newBidderId: user.IUserId,
+                    auctionId: auctionId,
+                    productId: auction.IProductId.Value,
+                    newBidderName: user.SFullName,
+                    newBidAmount: bidAmount,
+                    productName: auction.IProduct.SProductName
+                );
+            }
 
             return Json(new { success = true, message = "Thành công!", newHighestBid = bidAmount });
         }
@@ -209,6 +245,22 @@ namespace BTL_LTWNC.Controllers
                 }
                 _context.TblAuctions.Add(auction);
                 await _context.SaveChangesAsync();
+                if (product.ISellerId != null)
+                {
+                    var notification = new TblNotification
+                    {
+                        iUserId = product.ISellerId.Value,
+                        iSenderId = user.IUserId,
+                        iAuctionId = auction.IAuctionId,
+                        iProductId = product.IProductId,
+                        sTitle = "Phiên đấu giá mới được tạo",
+                        SMessage = $"Sản phẩm '{product.SProductName}' của bạn đã được đưa vào đấu giá. Bắt đầu: {auction.DtStartTime:dd/MM/yyyy HH:mm}",
+                        SType = "auction_started",
+                        SUrl = $"/Auction/Detail?productId={product.IProductId}"
+                    };
+                    await _notificationRepo.CreateNotificationAsync(notification);
+
+                }
                 TempData["Message"] = "Tạo đấu giá thành công";
                 return RedirectToAction("ListProduct", "Product", new { categoryId = product.ICategoryId });
             }
@@ -271,6 +323,75 @@ namespace BTL_LTWNC.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+                if (highestBid != null && highestBid.IBidderId != null)
+                {
+                    await _notificationService.NotifyAuctionWin(
+                        winnerId: highestBid.IBidderId.Value,
+                        sellerId: auction.IProduct?.ISellerId ?? 0,
+                        auctionId: auctionId,
+                        productId: auction.IProductId ?? 0,
+                        productName: auction.IProduct?.SProductName ?? "Sản phẩm",
+                        finalPrice: highestBid.DBidAmount ?? 0
+                    );
+
+                    if (auction.IProduct?.ISellerId != null)
+                    {
+                        await _notificationService.NotifyProductSold(
+                            sellerId: auction.IProduct.ISellerId.Value,
+                            winnerId: highestBid.IBidderId.Value,
+                            auctionId: auctionId,
+                            productId: auction.IProductId ?? 0,
+                            winnerName: highestBid.IBidder?.SFullName ?? "Người mua",
+                            productName: auction.IProduct?.SProductName ?? "Sản phẩm",
+                            finalPrice: highestBid.DBidAmount ?? 0
+                        );
+                    }
+                    var losingBidders = await _context.TblBids
+                                        .Include(b => b.IBidder)
+                                        .Where(b => b.IAuctionId == auctionId && b.IBidderId != highestBid.IBidderId)
+                                        .Select(b => b.IBidderId)
+                                        .Distinct()
+                                        .ToListAsync();
+                    var losingNotifications = new List<TblNotification>();
+                    foreach (var loserId in losingBidders)
+                    {
+                        if (loserId != null)
+                        {
+                            losingNotifications.Add(new TblNotification
+                            {
+                                iUserId = loserId.Value,
+                                iSenderId = highestBid.IBidderId,
+                                iAuctionId = auctionId,
+                                iProductId = auction.IProductId ?? 0,
+                                sTitle = "Phiên đấu giá đã kết thúc",
+                                SMessage = $"Rất tiếc! Bạn đã không thắng đấu giá '{auction.IProduct?.SProductName}'. Người thắng: {highestBid.IBidder?.SFullName}",
+                                SType = "auction_lost",
+                                SUrl = $"/Auction/Detail?productId={auction.IProductId}"
+                            });
+                        }
+                    }
+                    if (losingNotifications.Any())
+                    {
+                        await _notificationRepo.CreateNotificationsAsync(losingNotifications);
+                    }
+                }
+                else
+                {
+                    if(auction.IProduct?.ISellerId != null)
+                    {
+                        var notification = new TblNotification
+                        {
+                            iUserId = auction.IProduct.ISellerId.Value,
+                            iAuctionId = auctionId,
+                            iProductId = auction.IProductId ?? 0,
+                            sTitle = "Đấu giá kết thúc không có người thắng",
+                            SMessage = $"Phiên đấu giá '{auction.IProduct?.SProductName}' đã kết thúc nhưng không có ai đặt giá.",
+                            SType = "auction_no_winner",
+                            SUrl = $"/Auction/Detail?productId={auction.IProductId}"
+                        };
+                        await _notificationRepo.CreateNotificationAsync(notification);
+                    }
+                }
 
                 string message = highestBid != null
                     ? $"Đã kết thúc đấu giá sớm! Người thắng cuộc: {highestBid.IBidder?.SFullName}"
