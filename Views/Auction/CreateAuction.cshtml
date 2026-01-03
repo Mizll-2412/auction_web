@@ -82,8 +82,48 @@
 
         <!-- ACTIONS -->
         <div class="form-actions">
-            <button type="submit" class="btn-primary">✓ Gửi yêu cầu</button>
+            <button type="submit" class="btn-primary">Gửi yêu cầu</button>
             <a href="javascript:history.back()" class="btn-secondary">Hủy</a>
         </div>
     </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const startTimeInput = document.querySelector('input[name="DtStartTime"]');
+        const endTimeInput = document.querySelector('input[name="DtEndTime"]');
+
+        if (!startTimeInput || !endTimeInput) return;
+
+        // Lấy thời gian hiện tại
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        // Set min cho start & end
+        startTimeInput.min = minDateTime;
+        endTimeInput.min = minDateTime;
+
+        // Khi đổi thời gian bắt đầu
+        startTimeInput.addEventListener('change', function () {
+            endTimeInput.min = this.value;
+
+            if (endTimeInput.value && endTimeInput.value <= this.value) {
+                alert('Thời gian kết thúc phải sau thời gian bắt đầu!');
+                endTimeInput.value = '';
+            }
+        });
+
+        // Khi đổi thời gian kết thúc
+        endTimeInput.addEventListener('change', function () {
+            if (startTimeInput.value && this.value <= startTimeInput.value) {
+                alert('Thời gian kết thúc phải sau thời gian bắt đầu!');
+                this.value = '';
+            }
+        });
+    });
+</script>
