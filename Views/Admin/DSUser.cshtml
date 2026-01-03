@@ -1,7 +1,6 @@
 @model IEnumerable<BTL_LTWNC.Models.TblUser>
 @{
     ViewData["Title"] = "Danh sách tài khoản";
-    // Kiểm tra và hiển thị thông báo thành công hoặc lỗi
     var successMessage = TempData["SuccessMessage"];
     var errorMessage = TempData["ErrorMessage"];
     var role = ViewBag.Role;
@@ -41,7 +40,6 @@
                 <th>Xóa</th>
                 <th>Sửa</th>
             }
-            <th>VerifyKey</th>
         </tr>
     </thead>
     <tbody>
@@ -57,18 +55,17 @@
                 @if (role == "Quản trị viên")
                 {
                     <td>
-                        @if (item.SRole != "Quản trị viên")
+                        @if (item.SRole == "Quản trị viên")
                         {
                             <a href="javascript:void(0);" class="btn btn-danger" onclick="confirmDelete1(@item.IUserId)">Xóa</a>
                         }
                     </td>
                     <td>
-                        @if (item.SRole != "Quản trị viên")
+                        @if (item.SRole == "Quản trị viên")
                         {
                             <a href="javascript:void(0);" class="btn btn-warning" onclick="openEditModal1(@item.IUserId)">Sửa</a>
                         }
                     </td>
-                 <td>@item.VerifyKey</td>
                 }
             </tr>
         }
@@ -130,9 +127,7 @@
 @section Scripts {
     <script>
         function confirmDelete1(userId) {
-            // Xác nhận xóa người dùng
             if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
-                // Gọi API để xóa user
                 fetch(`/Admin/DeleteUserAJAX?userId=${userId}`, { // Sửa cú pháp đường dẫn URL
                     method: 'DELETE',
                     headers: {
