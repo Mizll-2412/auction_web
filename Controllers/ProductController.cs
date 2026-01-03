@@ -41,8 +41,8 @@ namespace BTL_LTWNC.Controllers
                 var user = JsonConvert.DeserializeObject<TblUser>(userJson);
                 ViewBag.CategoryId = categoryId;
                 
-                ViewBag.IsAdmin = user.SRole == "Quản trị viên";
-                if (user.SRole == "Quản trị viên")
+                ViewBag.IsSeller = user.SRole == "Người Bán";
+                if (user.SRole == "Người Bán")
                 {
                     var myProducts = products.Where(p => p.ISellerId == user.IUserId).ToList();
                     return View(myProducts);
@@ -68,7 +68,7 @@ namespace BTL_LTWNC.Controllers
                 return RedirectToAction("Login", "Account");
             }
             var user = JsonConvert.DeserializeObject<TblUser>(userJson);
-            if (user.SRole != "Quản trị viên")
+            if (user.SRole != "Người Bán")
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -110,7 +110,7 @@ namespace BTL_LTWNC.Controllers
             }
 
             var user = JsonConvert.DeserializeObject<TblUser>(userJson);
-            if (user.SRole != "Quản trị viên")
+            if (user.SRole != "Người Bán")
             {
                 return RedirectToAction("Index", "Home");
             }

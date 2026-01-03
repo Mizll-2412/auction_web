@@ -21,6 +21,10 @@
       "PackagePath": "staticwebassets\\css\\Auction\\auction.css"
     },
     {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\Home\\auction-create.css",
+      "PackagePath": "staticwebassets\\css\\Home\\auction-create.css"
+    },
+    {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\Home\\product-form.css",
       "PackagePath": "staticwebassets\\css\\Home\\product-form.css"
     },

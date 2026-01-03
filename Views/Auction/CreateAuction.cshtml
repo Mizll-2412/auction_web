@@ -4,134 +4,86 @@
     var product = ViewBag.Product as BTL_LTWNC.Models.TblProduct;
 }
 
-<link rel="stylesheet" href="~/css/Home/product-form.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Home/auction-create.css" asp-append-version="true" />
 
-<div class="form-container">
-    <div class="form-header">
+<div class="auction-container">
+
+    <!-- HEADER -->
+    <div class="auction-header">
         <h2>Tạo Đấu Giá Mới</h2>
-        <a href="javascript:history.back()" class="btn-back">
-            ← Quay lại
-        </a>
+        <a href="javascript:history.back()" class="btn-back">← Quay lại</a>
     </div>
 
-    @if (ViewBag.ErrorMessage != null)
-    {
-        <div class="alert alert-error">
-            @ViewBag.ErrorMessage
-        </div>
-    }
-
+    <!-- PRODUCT PREVIEW -->
     @if (product != null)
     {
         <div class="product-preview">
             <img src="@product.SImageUrl" alt="@product.SProductName" />
-            <div class="product-preview-info">
+
+            <div class="product-info">
                 <h3>@product.SProductName</h3>
                 <p>@product.SDescription</p>
-                <span class="starting-price">Giá khởi điểm: @product..DStartingPrice ?? 0).ToString("N0")) VNĐ</span>
+                <span class="price">
+                    Giá khởi điểm:
+                    <strong>@((product.DStartingPrice ?? 0).ToString("N0")) VNĐ</strong>
+                </span>
             </div>
         </div>
     }
 
+    <!-- FORM -->
     <form asp-action="CreateAuction" method="post" class="auction-form">
         <input type="hidden" asp-for="IProductId" value="@product?.IProductId" />
 
+        <!-- AUCTION INFO -->
         <div class="form-section">
-            <h3 class="section-title">Thông tin cuộc đấu giá</h3>
-            
+            <h4>Thông tin cuộc đấu giá</h4>
+
             <div class="form-row">
                 <div class="form-group">
-                    <label asp-for="DtStartTime" class="form-label">Thời gian bắt đầu <span class="required">*</span></label>
-                    <input asp-for="DtStartTime" type="datetime-local" class="form-control" required />
-                    <span asp-validation-for="DtStartTime" class="text-danger"></span>
+                    <label>Thời gian bắt đầu *</label>
+                    <input asp-for="DtStartTime" type="datetime-local" required />
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="DtEndTime" class="form-label">Thời gian kết thúc <span class="required">*</span></label>
-                    <input asp-for="DtEndTime" type="datetime-local" class="form-control" required />
-                    <span asp-validation-for="DtEndTime" class="text-danger"></span>
+                    <label>Thời gian kết thúc *</label>
+                    <input asp-for="DtEndTime" type="datetime-local" required />
                 </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="SStatus" class="form-label">Trạng thái <span class="required">*</span></label>
-                <select asp-for="SStatus" class="form-control" required>
+                <label>Trạng thái *</label>
+                <select asp-for="SStatus" required>
                     <option value="">-- Chọn trạng thái --</option>
-                    <option value="Đang diễn ra">Đang diễn ra</option>
                     <option value="Sắp diễn ra">Sắp diễn ra</option>
+                    <option value="Đang diễn ra">Đang diễn ra</option>
                     <option value="Đã kết thúc">Đã kết thúc</option>
                 </select>
-                <span asp-validation-for="SStatus" class="text-danger"></span>
             </div>
         </div>
 
+        <!-- BID INFO -->
         <div class="form-section">
-            <h3 class="section-title">Thông tin đấu giá cụ thể</h3>
-            
+            <h4>Thông tin đấu giá</h4>
+
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label">Mã sản phẩm</label>
-                    <input type="text" class="form-control" value="@product?.IProductId" readonly disabled />
+                    <label>Mã sản phẩm</label>
+                    <input type="text" value="@product?.IProductId" disabled />
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Giá cao nhất hiện tại</label>
-                    <input asp-for="DHighestBid" type="number" step="0.01" class="form-control" placeholder="0.00" />
-                    <span asp-validation-for="DHighestBid" class="text-danger"></span>
-                    <small class="form-text">Để trống nếu chưa có ai đấu giá</small>
+                    <label>Giá cao nhất hiện tại</label>
+                    <input asp-for="DHighestBid" type="number" placeholder="0" />
+                    <small>Để trống nếu chưa có lượt đấu</small>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Số người thắng cuộc</label>
-                <input asp-for="IWinnerId" type="number" class="form-control" placeholder="Để trống nếu chưa có" />
-                <span asp-validation-for="IWinnerId" class="text-danger"></span>
-                <small class="form-text">ID người dùng thắng cuộc (chỉ điền khi đấu giá kết thúc)</small>
             </div>
         </div>
 
+        <!-- ACTIONS -->
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">
-                <span>✓</span> Tạo Đấu Giá
-            </button>
-            <a href="javascript:history.back()" class="btn btn-secondary">
-                Hủy
-            </a>
+            <button type="submit" class="btn-primary">✓ Gửi yêu cầu</button>
+            <a href="javascript:history.back()" class="btn-secondary">Hủy</a>
         </div>
     </form>
 </div>
-
-<script>
-    // Set minimum datetime to current time
-    document.addEventListener('DOMContentLoaded', function() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-        
-        const startTimeInput = document.querySelector('input[name="DtStartTime"]');
-        const endTimeInput = document.querySelector('input[name="DtEndTime"]');
-        
-        startTimeInput.min = minDateTime;
-        endTimeInput.min = minDateTime;
-        
-        // Validate end time is after start time
-        startTimeInput.addEventListener('change', function() {
-            endTimeInput.min = this.value;
-            if (endTimeInput.value && endTimeInput.value <= this.value) {
-                alert('Thời gian kết thúc phải sau thời gian bắt đầu!');
-                endTimeInput.value = '';
-            }
-        });
-        
-        endTimeInput.addEventListener('change', function() {
-            if (startTimeInput.value && this.value <= startTimeInput.value) {
-                alert('Thời gian kết thúc phải sau thời gian bắt đầu!');
-                this.value = '';
-            }
-        });
-    });
-</script>

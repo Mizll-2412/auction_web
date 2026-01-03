@@ -185,7 +185,7 @@ namespace BTL_LTWNC.Controllers
             }
 
             var user = JsonConvert.DeserializeObject<TblUser>(userJson);
-            if (user.SRole != "Quản trị viên")
+            if (user.SRole != "Người Bán")
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -284,7 +284,7 @@ namespace BTL_LTWNC.Controllers
             }
 
             var user = JsonConvert.DeserializeObject<TblUser>(userJson);
-            if (user.SRole != "Quản trị viên")
+            if (user.SRole != "Người Bán")
             {
                 return RedirectToAction("Index", "Home");
             }

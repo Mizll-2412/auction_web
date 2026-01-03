@@ -1,14 +1,16 @@
 @model List<BTL_LTWNC.Models.TblProduct>
 @{
     ViewData["Title"] = "Products";
-    var isAdmin = ViewBag.IsAdmin;
+    var isSeller = ViewBag.IsSeller ?? false;
 }
 
 <link rel="stylesheet" href="~/css/Home/sanpham.css" asp-append-version="true" />
 
-@if (isAdmin)
+@if (isSeller)
 {
-    <a href="@Url.Action("AddProduct", "Product")" class="btn btn-primary">Thêm sản phẩm mới</a>
+    <a href="@Url.Action("AddProduct", "Product")" class="btn btn-primary">
+        Thêm sản phẩm mới
+    </a>
 }
 
 <div class="product-page">
@@ -37,16 +39,20 @@
                         </div>
                     </a>
 
-                    @if (isAdmin)
+                    @if (isSeller)
                     {
                         <div class="product-actions">
-                            <a href="javascript:void(0)" class="btn btn-light" onclick="addAuction(@product.IProductId)">Tạo Đấu
-                                Giá</a>
-                            <a href="javascript:void(0)" class="btn btn-edit" onclick="editProduct(@product.IProductId)">Sửa</a>
-                            <form method="post" id="deleteForm-@product.IProductId" style="display:inline;">
-                                <button type="button" class="btn btn-delete"
-                                    onclick="deleteProduct(@product.IProductId)">Xóa</button>
-                            </form>
+                            <a href="javascript:void(0)" class="btn btn-light" onclick="addAuction(@product.IProductId)">
+                                Tạo Đấu Giá
+                            </a>
+
+                            <a href="javascript:void(0)" class="btn btn-edit" onclick="editProduct(@product.IProductId)">
+                                Sửa
+                            </a>
+
+                            <button type="button" class="btn btn-delete" onclick="deleteProduct(@product.IProductId)">
+                                Xóa
+                            </button>
                         </div>
                     }
                 </div>
