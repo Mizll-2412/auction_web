@@ -93,12 +93,39 @@
             text-align: center;
             font-size: 14px;
         }
+
+        .nav-item .nav-link[asp-action="UserList"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: white !important;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item .nav-link[asp-action="UserList"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-item .nav-link[asp-action="UserList"] i {
+            margin-right: 5px;
+        }
+
+        @* @media
+        (max-width: 991px) {
+            .nav-item .nav-link[asp-action="UserList"] {
+                display: inline-block;
+                margin: 5px 0;
+            }
+        } *@
     </style>
 </head>
 
 <body>
     @{
         var userName = Context.Session.GetString("FullName");
+        var userRole = Context.Session.GetString("Role");
     }
 
     @* -------- HEADER -------- *@
@@ -134,6 +161,16 @@
                         }
                         else
                         {
+                            @* Hiển thị menu Quản trị cho Admin *@
+                            @if (userRole == "Quản trị viên")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Admin" asp-action="UserList">
+                                        <i class="fa-solid fa-shield-halved"></i> Quản trị
+                                    </a>
+                                </li>
+                            }
+
                             <li class="nav-item position-relative">
                                 <a class="nav-link notification-icon" id="notificationBell">
                                     <i class="fa-solid fa-bell fa-lg"></i>

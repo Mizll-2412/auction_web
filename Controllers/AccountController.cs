@@ -40,7 +40,10 @@ namespace BTL_LTWNC.Controllers
 
             HttpContext.Session.SetString("UserSession", JsonConvert.SerializeObject(user));
             HttpContext.Session.SetString("SEmail", user.SEmail);
+            HttpContext.Session.SetInt32("UserId", user.IUserId);
             HttpContext.Session.SetString("FullName", user.SFullName);
+            HttpContext.Session.SetString("Role", user.SRole);
+
 
             return Json(new { success = true });
         }
@@ -70,7 +73,7 @@ namespace BTL_LTWNC.Controllers
                 SEmail = model.SEmail,
                 SFullName = model.SFullName,
                 SPhoneNumber = model.SPhoneNumber,
-                SPassword = HashPassword(model.SPassword), // MÃ HÓA MẬT KHẨU
+                SPassword = HashPassword(model.SPassword),
                 VerifyKey = GenerateVerifyKey(),
                 SRole = "Người dùng"
             };
