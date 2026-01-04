@@ -37,6 +37,10 @@
       "PackagePath": "staticwebassets\\css\\Home\\trangchu.css"
     },
     {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\admin-dashboard.css",
+      "PackagePath": "staticwebassets\\css\\admin-dashboard.css"
+    },
+    {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\auction.css",
       "PackagePath": "staticwebassets\\css\\auction.css"
     },
@@ -71,6 +75,10 @@
     {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\_Layout.js",
       "PackagePath": "staticwebassets\\js\\_Layout.js"
+    },
+    {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\admin-dashboard.js",
+      "PackagePath": "staticwebassets\\js\\admin-dashboard.js"
     },
     {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\home\\product.js",

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "NG+Fs4sAOcGNf4EJDQfpe0vkMvbyoaT8Q5BbBrmd8KQ=",
+  "Hash": "agMaDFE+QNdEJqx0PX6DUgZ6aFBNlxyaTUSa9TENCPc=",
   "Source": "BTL_LTWNC",
   "BasePath": "_content/BTL_LTWNC",
   "Mode": "Default",
@@ -110,6 +110,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\Account\\trangcanhan.css"
+    },
+    {
+      "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\admin-dashboard.css",
+      "SourceId": "BTL_LTWNC",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\",
+      "BasePath": "_content/BTL_LTWNC",
+      "RelativePath": "css/admin-dashboard.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\admin-dashboard.css"
     },
     {
       "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\css\\auction.css",
@@ -376,6 +395,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\Account\\DangNhap.js"
+    },
+    {
+      "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\admin-dashboard.js",
+      "SourceId": "BTL_LTWNC",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\",
+      "BasePath": "_content/BTL_LTWNC",
+      "RelativePath": "js/admin-dashboard.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\admin-dashboard.js"
     },
     {
       "Identity": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\home\\product.js",
