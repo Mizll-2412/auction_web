@@ -5,6 +5,7 @@
     var errorMessage = TempData["ErrorMessage"];
     var role = ViewBag.Role;
 }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
 
@@ -17,22 +18,22 @@
         </div>
         <nav class="sidebar-menu">
             <button class="menu-item active" onclick="showSection('dashboard')">
-                Thống kê
+                <i class="bi bi-speedometer2 me-2"></i> Thống kê
             </button>
             <button class="menu-item" onclick="showSection('users')">
-                Quản lý tài khoản
+                <i class="bi bi-people me-2"></i> Quản lý tài khoản
             </button>
             <button class="menu-item" onclick="showSection('posts')">
-                Quản lý bài đăng
+                <i class="bi bi-file-text me-2"></i> Quản lý bài đăng
             </button>
             <button class="menu-item" onclick="showSection('categories')">
-                Danh mục
+                <i class="bi bi-tags me-2"></i> Danh mục
             </button>
             <button class="menu-item" onclick="showSection('products')">
-                Sản phẩm
+                <i class="bi bi-box-seam me-2"></i> Sản phẩm
             </button>
             <button class="menu-item" onclick="showSection('reviews')">
-                Reviews
+                <i class="bi bi-star-fill me-2"></i> Reviews
             </button>
         </nav>
     </aside>
@@ -63,239 +64,264 @@
                     </select>
                 </div>
                 <div>
-                    <span class="clear-filter">⊗ Xóa bỏ lọc</span>
+                    <span class="clear-filter"> Xóa bỏ lọc</span>
                 </div>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon blue">👥</div>
-                    <div class="stat-info">
-                        <h3>@Model.Count()</h3>
-                        <p>Tổng người dùng</p>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="bi bi-people fs-1 text-primary me-3"></i>
+                            <div>
+                                <h5 class="mb-0">@Model.Count()</h5>
+                                <small class="text-muted">Người dùng</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon green">📝</div>
-                    <div class="stat-info">
-                        <h3>0</h3>
-                        <p>Tổng bài đăng</p>
+
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="bi bi-file-text fs-1 text-success me-3"></i>
+                            <div>
+                                <h5 class="mb-0">0</h5>
+                                <small class="text-muted">Bài đăng</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon cyan">📦</div>
-                    <div class="stat-info">
-                        <h3>0</h3>
-                        <p>Tổng sản phẩm</p>
+
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="bi bi-box-seam fs-1 text-info me-3"></i>
+                            <div>
+                                <h5 class="mb-0">0</h5>
+                                <small class="text-muted">Sản phẩm</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon yellow">⭐</div>
-                    <div class="stat-info">
-                        <h3>0</h3>
-                        <p>Tổng đánh giá</p>
+
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="bi bi-star-fill fs-1 text-warning me-3"></i>
+                            <div>
+                                <h5 class="mb-0">0</h5>
+                                <small class="text-muted">Đánh giá</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Users Section -->
-        <div id="users-section" class="section">
-            <div class="top-bar">
-                <h1 class="page-title">Quản lý tài khoản</h1>
-                <p class="page-subtitle">Danh sách người dùng trong hệ thống</p>
-            </div>
 
-            @if (successMessage != null)
-            {
-                <div class="alert alert-success">
-                    ✓ @successMessage
+            <!-- Users Section -->
+            <div id="users-section" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Quản lý tài khoản</h1>
+                    <p class="page-subtitle">Danh sách người dùng trong hệ thống</p>
                 </div>
-            }
 
-            @if (errorMessage != null)
-            {
-                <div class="alert alert-danger">
-                    ✕ @errorMessage
-                </div>
-            }
+                @if (successMessage != null)
+                {
+                    <div class="alert alert-success">
+                        ✓ @successMessage
+                    </div>
+                }
 
-            <div class="data-table">
-                <div class="table-header">
-                    <h3>Danh sách tài khoản</h3>
-                    @if (role == "Quản trị viên")
-                    {
-                        <button class="btn btn-success" onclick="openAddForm()">+ Thêm mới</button>
-                    }
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên đầy đủ</th>
-                            <th>Email</th>
-                            <th>Vai trò</th>
-                            @if (role == "Quản trị viên")
-                            {
-                                <th>Thao tác</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
+                @if (errorMessage != null)
+                {
+                    <div class="alert alert-danger">
+                        ✕ @errorMessage
+                    </div>
+                }
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Danh sách tài khoản</h3>
+                        @if (role == "Quản trị viên")
                         {
-                            <tr id="user-row-@item.IUserId">
-                                <td>@item.IUserId</td>
-                                <td>@item.SFullName</td>
-                                <td>@item.SEmail</td>
-                                <td>
-                                    @if (item.SRole == "Quản trị viên")
-                                    {
-                                        <span class="badge badge-success">@item.SRole</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-info">@item.SRole</span>
-                                    }
-                                </td>
+                            <button class="btn btn-success" onclick="openAddForm()">+ Thêm mới</button>
+                        }
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên đầy đủ</th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
                                 @if (role == "Quản trị viên")
                                 {
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" onclick="openEditModal1(@item.IUserId)">Sửa</button>
-                                        <button class="btn btn-danger btn-sm" onclick="confirmDelete1(@item.IUserId)">Xóa</button>
-                                    </td>
+                                    <th>Thao tác</th>
                                 }
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Posts Section -->
-        <div id="posts-section" class="section">
-            <div class="top-bar">
-                <h1 class="page-title">Quản lý bài đăng</h1>
-                <p class="page-subtitle">Danh sách bài đăng trong hệ thống</p>
-            </div>
-            <div class="data-table">
-                <div class="table-header">
-                    <h3>Danh sách bài đăng</h3>
-                    <button class="btn btn-success">+ Thêm bài viết</button>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="user-row-@item.IUserId">
+                                    <td>@item.IUserId</td>
+                                    <td>@item.SFullName</td>
+                                    <td>@item.SEmail</td>
+                                    <td>
+                                        @if (item.SRole == "Quản trị viên")
+                                        {
+                                            <span class="badge badge-success">@item.SRole</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-info">@item.SRole</span>
+                                        }
+                                    </td>
+                                    @if (role == "Quản trị viên")
+                                    {
+                                        <td>
+                                            <button class="btn btn-warning btn-sm"
+                                                onclick="openEditModal1(@item.IUserId)">Sửa</button>
+                                            <button class="btn btn-danger btn-sm"
+                                                onclick="confirmDelete1(@item.IUserId)">Xóa</button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tiêu đề</th>
-                            <th>Tác giả</th>
-                            <th>Danh mục</th>
-                            <th>Ngày tạo</th>
-                            <th>Trạng thái</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
-        </div>
 
-        <!-- Categories Section -->
-        <div id="categories-section" class="section">
-            <div class="top-bar">
-                <h1 class="page-title">Quản lý danh mục</h1>
-                <p class="page-subtitle">Danh sách danh mục trong hệ thống</p>
-            </div>
-            <div class="data-table">
-                <div class="table-header">
-                    <h3>Danh sách danh mục</h3>
-                    <button class="btn btn-success">+ Thêm danh mục</button>
+            <!-- Posts Section -->
+            <div id="posts-section" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Quản lý bài đăng</h1>
+                    <p class="page-subtitle">Danh sách bài đăng trong hệ thống</p>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên danh mục</th>
-                            <th>Mô tả</th>
-                            <th>Số lượng</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Danh sách bài đăng</h3>
+                        <button class="btn btn-success">+ Thêm bài viết</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tiêu đề</th>
+                                <th>Tác giả</th>
+                                <th>Danh mục</th>
+                                <th>Ngày tạo</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-        <!-- Products Section -->
-        <div id="products-section" class="section">
-            <div class="top-bar">
-                <h1 class="page-title">Quản lý sản phẩm</h1>
-                <p class="page-subtitle">Danh sách sản phẩm trong hệ thống</p>
-            </div>
-            <div class="data-table">
-                <div class="table-header">
-                    <h3>Danh sách sản phẩm</h3>
-                    <button class="btn btn-success">+ Thêm sản phẩm</button>
+            <!-- Categories Section -->
+            <div id="categories-section" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Quản lý danh mục</h1>
+                    <p class="page-subtitle">Danh sách danh mục trong hệ thống</p>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên sản phẩm</th>
-                            <th>Giá</th>
-                            <th>Danh mục</th>
-                            <th>Kho</th>
-                            <th>Trạng thái</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Danh sách danh mục</h3>
+                        <button class="btn btn-success">+ Thêm danh mục</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên danh mục</th>
+                                <th>Mô tả</th>
+                                <th>Số lượng</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-        <!-- Reviews Section -->
-        <div id="reviews-section" class="section">
-            <div class="top-bar">
-                <h1 class="page-title">Quản lý đánh giá</h1>
-                <p class="page-subtitle">Danh sách đánh giá từ người dùng</p>
-            </div>
-            <div class="data-table">
-                <div class="table-header">
-                    <h3>Danh sách đánh giá</h3>
+            <!-- Products Section -->
+            <div id="products-section" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Quản lý sản phẩm</h1>
+                    <p class="page-subtitle">Danh sách sản phẩm trong hệ thống</p>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Người đánh giá</th>
-                            <th>Sản phẩm</th>
-                            <th>Xếp hạng</th>
-                            <th>Nội dung</th>
-                            <th>Ngày tạo</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Danh sách sản phẩm</h3>
+                        <button class="btn btn-success">+ Thêm sản phẩm</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Danh mục</th>
+                                <th>Kho</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+
+            <!-- Reviews Section -->
+            <div id="reviews-section" class="section">
+                <div class="top-bar">
+                    <h1 class="page-title">Quản lý đánh giá</h1>
+                    <p class="page-subtitle">Danh sách đánh giá từ người dùng</p>
+                </div>
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3>Danh sách đánh giá</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Người đánh giá</th>
+                                <th>Sản phẩm</th>
+                                <th>Xếp hạng</th>
+                                <th>Nội dung</th>
+                                <th>Ngày tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px; color: #999;">Chưa có dữ liệu
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
     </main>
 </div>
 
@@ -386,19 +412,19 @@
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        const row = document.getElementById(`user-row-${userId}`);
-                        if (row) {
-                            row.remove();
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            const row = document.getElementById(`user-row-${userId}`);
+                            if (row) {
+                                row.remove();
+                            }
+                            alert('Xóa người dùng thành công!');
+                        } else {
+                            alert('Không thể xóa: ' + result.message);
                         }
-                        alert('Xóa người dùng thành công!');
-                    } else {
-                        alert('Không thể xóa: ' + result.message);
-                    }
-                })
-                .catch(() => alert('Đã xảy ra lỗi khi xóa người dùng.'));
+                    })
+                    .catch(() => alert('Đã xảy ra lỗi khi xóa người dùng.'));
             }
         }
 
@@ -439,21 +465,21 @@
                 },
                 body: JSON.stringify(user)
             })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    alert('Cập nhật thành công!');
-                    closeEditForm();
-                    const row = document.getElementById(`user-row-${id}`);
-                    row.querySelector('td:nth-child(2)').textContent = fullName;
-                    row.querySelector('td:nth-child(3)').textContent = email;
-                    const badgeClass = role === 'Quản trị viên' ? 'badge-success' : 'badge-info';
-                    row.querySelector('td:nth-child(4)').innerHTML = `<span class="badge ${badgeClass}">${role}</span>`;
-                } else {
-                    alert('Cập nhật thất bại: ' + result.message);
-                }
-            })
-            .catch(() => alert('Đã xảy ra lỗi khi cập nhật.'));
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Cập nhật thành công!');
+                        closeEditForm();
+                        const row = document.getElementById(`user-row-${id}`);
+                        row.querySelector('td:nth-child(2)').textContent = fullName;
+                        row.querySelector('td:nth-child(3)').textContent = email;
+                        const badgeClass = role === 'Quản trị viên' ? 'badge-success' : 'badge-info';
+                        row.querySelector('td:nth-child(4)').innerHTML = `<span class="badge ${badgeClass}">${role}</span>`;
+                    } else {
+                        alert('Cập nhật thất bại: ' + result.message);
+                    }
+                })
+                .catch(() => alert('Đã xảy ra lỗi khi cập nhật.'));
         }
 
         function addUser() {
@@ -480,34 +506,34 @@
                 },
                 body: JSON.stringify(user)
             })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    alert('Thêm người dùng thành công!');
-                    closeAddForm();
-                    
-                    const tableBody = document.querySelector('#users-section table tbody');
-                    const newRow = document.createElement('tr');
-                    newRow.id = `user-row-${result.user.iUserId}`;
-                    
-                    const badgeClass = result.user.sRole === 'Quản trị viên' ? 'badge-success' : 'badge-info';
-                    
-                    newRow.innerHTML = `
-                        <td>${result.user.iUserId}</td>
-                        <td>${result.user.sFullName}</td>
-                        <td>${result.user.sEmail}</td>
-                        <td><span class="badge ${badgeClass}">${result.user.sRole}</span></td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="openEditModal1(${result.user.iUserId})">Sửa</button>
-                            <button class="btn btn-danger btn-sm" onclick="confirmDelete1(${result.user.iUserId})">Xóa</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(newRow);
-                } else {
-                    alert('Thêm người dùng thất bại: ' + result.message);
-                }
-            })
-            .catch(() => alert('Đã xảy ra lỗi khi thêm người dùng.'));
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Thêm người dùng thành công!');
+                        closeAddForm();
+
+                        const tableBody = document.querySelector('#users-section table tbody');
+                        const newRow = document.createElement('tr');
+                        newRow.id = `user-row-${result.user.iUserId}`;
+
+                        const badgeClass = result.user.sRole === 'Quản trị viên' ? 'badge-success' : 'badge-info';
+
+                        newRow.innerHTML = `
+                                                <td>${result.user.iUserId}</td>
+                                                <td>${result.user.sFullName}</td>
+                                                <td>${result.user.sEmail}</td>
+                                                <td><span class="badge ${badgeClass}">${result.user.sRole}</span></td>
+                                                <td>
+                                                    <button class="btn btn-warning btn-sm" onclick="openEditModal1(${result.user.iUserId})">Sửa</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete1(${result.user.iUserId})">Xóa</button>
+                                                </td>
+                                            `;
+                        tableBody.appendChild(newRow);
+                    } else {
+                        alert('Thêm người dùng thất bại: ' + result.message);
+                    }
+                })
+                .catch(() => alert('Đã xảy ra lỗi khi thêm người dùng.'));
         }
     </script>
 }
