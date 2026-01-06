@@ -3,11 +3,13 @@
     ViewData["Title"] = "Quản lý danh mục";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+
 <style>
-    .order-controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .category-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
     }
 
     code {
@@ -16,18 +18,26 @@
         border-radius: 3px;
         color: #e83e8c;
     }
+
+    .image-preview {
+        max-width: 200px;
+        max-height: 200px;
+        margin-top: 10px;
+        border-radius: 8px;
+        display: none;
+    }
 </style>
 
 <div class="top-bar">
     <h1 class="page-title">Quản lý danh mục</h1>
-    <p class="page-subtitle">Quản lý danh mục sản phẩm và bài viết</p>
+    <p class="page-subtitle">Quản lý danh mục sản phẩm</p>
 </div>
 
 <div class="actions-bar mb-3">
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <input type="text" id="searchCategory" placeholder="Tìm kiếm danh mục..." 
-                   class="form-control" onkeyup="searchCategories()">
+                   class="form-control" onkeyup="searchCategories()" style="width: 300px;">
         </div>
         <div>
             <button class="btn btn-success" onclick="openAddCategoryForm()">
@@ -38,68 +48,62 @@
 </div>
 
 <div class="data-table">
-    <table>
+    <table id="categoryTable">
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Hình ảnh</th>
                 <th>Tên danh mục</th>
-                <th>Slug</th>
                 <th>Mô tả</th>
                 <th>Số lượng sản phẩm</th>
-                <th>Trạng thái</th>
-                <th>Thứ tự hiển thị</th>
                 <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var category in Model)
+            @if (Model != null && Model.Any())
             {
-                <tr id="category-row-@category.ICategoryId">
-                    <td>@category.ICategoryId</td>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            @if (!string.IsNullOrEmpty(category.SIcon))
+                @foreach (var category in Model)
+                {
+                    <tr id="category-row-@category.ICategoryId">
+                        <td>@category.ICategoryId</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(category.ImageUrl))
                             {
-                                <i class="@category.SIcon me-2 fs-5"></i>
+                                <img src="@category.ImageUrl" alt="@category.SCategoryName" class="category-image">
                             }
+                            else
+                            {
+                                <div class="category-image d-flex align-items-center justify-content-center bg-secondary text-white">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            }
+                        </td>
+                        <td>
                             <strong>@category.SCategoryName</strong>
-                        </div>
-                    </td>
-                    <td><code>@category.SSlug</code></td>
-                    <td>@category.SDescription</td>
-                    <td>
-                        <span class="badge bg-primary">@category.ProductCount</span>
-                    </td>
-                    <td>
-                        @if (category.BIsActive)
-                        {
-                            <span class="badge bg-success">Hoạt động</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Ẩn</span>
-                        }
-                    </td>
-                    <td>
-                        <div class="order-controls">
-                            <button class="btn btn-sm btn-outline-secondary" onclick="moveUp(@category.ICategoryId)">
-                                <i class="bi bi-arrow-up"></i>
-                            </button>
-                            <span class="mx-2">@category.IOrder</span>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="moveDown(@category.ICategoryId)">
-                                <i class="bi bi-arrow-down"></i>
-                            </button>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <button class="btn btn-sm btn-warning" onclick="editCategory(@category.ICategoryId)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteCategory(@category.ICategoryId)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
+                        </td>
+                        <td>@(category.SDescription ?? "Chưa có mô tả")</td>
+                        <td>
+                            <span class="badge bg-primary">@(category.TblProducts?.Count ?? 0)</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-warning" onclick="editCategory(@category.ICategoryId)" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteCategory(@category.ICategoryId)" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center" style="padding: 40px;">
+                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                        <p class="text-muted mt-2">Chưa có danh mục nào</p>
                     </td>
                 </tr>
             }
@@ -116,42 +120,27 @@
         </div>
         <form id="categoryForm" onsubmit="event.preventDefault(); saveCategory();">
             <input type="hidden" id="categoryId">
+            
             <div class="form-group">
                 <label for="categoryName">Tên danh mục *</label>
                 <input type="text" class="form-control" id="categoryName" required>
             </div>
-            <div class="form-group">
-                <label for="categorySlug">Slug (URL thân thiện)</label>
-                <input type="text" class="form-control" id="categorySlug">
-                <small class="text-muted">Tự động tạo từ tên danh mục</small>
-            </div>
+
             <div class="form-group">
                 <label for="categoryDescription">Mô tả</label>
-                <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+                <textarea class="form-control" id="categoryDescription" rows="3" 
+                          placeholder="Nhập mô tả cho danh mục..."></textarea>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="categoryIcon">Icon (Bootstrap Icons)</label>
-                        <input type="text" class="form-control" id="categoryIcon" placeholder="bi bi-box-seam">
-                        <small class="text-muted">Ví dụ: bi bi-box-seam, bi bi-star</small>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="categoryOrder">Thứ tự hiển thị</label>
-                        <input type="number" class="form-control" id="categoryOrder" value="0">
-                    </div>
-                </div>
-            </div>
+
             <div class="form-group">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="categoryActive" checked>
-                    <label class="form-check-label" for="categoryActive">
-                        Kích hoạt danh mục này
-                    </label>
-                </div>
+                <label for="categoryImageUrl">URL hình ảnh</label>
+                <input type="text" class="form-control" id="categoryImageUrl" 
+                       placeholder="https://example.com/image.jpg"
+                       onchange="previewImage()">
+                <small class="text-muted">Nhập URL của hình ảnh danh mục</small>
+                <img id="imagePreview" class="image-preview" alt="Preview">
             </div>
+
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Hủy</button>
                 <button type="submit" class="btn btn-primary">
@@ -164,24 +153,51 @@
 
 @section Scripts {
     <script>
-        // Auto-generate slug from category name
-        document.getElementById('categoryName').addEventListener('input', function() {
-            const slug = this.value
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[đĐ]/g, 'd')
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .trim();
-            document.getElementById('categorySlug').value = slug;
-        });
+        function previewImage() {
+            const url = document.getElementById('categoryImageUrl').value;
+            const preview = document.getElementById('imagePreview');
+            
+            if (url) {
+                preview.src = url;
+                preview.style.display = 'block';
+                preview.onerror = function() {
+                    this.style.display = 'none';
+                    alert('Không thể tải hình ảnh. Vui lòng kiểm tra URL.');
+                };
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function searchCategories() {
+            const input = document.getElementById('searchCategory');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('categoryTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const nameCell = rows[i].getElementsByTagName('td')[2];
+                const descCell = rows[i].getElementsByTagName('td')[3];
+                
+                if (nameCell || descCell) {
+                    const nameText = nameCell ? nameCell.textContent || nameCell.innerText : '';
+                    const descText = descCell ? descCell.textContent || descCell.innerText : '';
+                    
+                    if (nameText.toLowerCase().indexOf(filter) > -1 || 
+                        descText.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        }
 
         function openAddCategoryForm() {
             document.getElementById('categoryModalTitle').textContent = 'Thêm danh mục';
             document.getElementById('categoryForm').reset();
             document.getElementById('categoryId').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
             document.getElementById('categoryModal').style.display = 'block';
         }
 
@@ -189,15 +205,26 @@
             fetch(`/Admin/GetCategoryDetail?id=${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('categoryModalTitle').textContent = 'Sửa danh mục';
-                    document.getElementById('categoryId').value = data.id;
-                    document.getElementById('categoryName').value = data.name;
-                    document.getElementById('categorySlug').value = data.slug;
-                    document.getElementById('categoryDescription').value = data.description;
-                    document.getElementById('categoryIcon').value = data.icon;
-                    document.getElementById('categoryOrder').value = data.order;
-                    document.getElementById('categoryActive').checked = data.isActive;
-                    document.getElementById('categoryModal').style.display = 'block';
+                    if (data.success) {
+                        document.getElementById('categoryModalTitle').textContent = 'Sửa danh mục';
+                        document.getElementById('categoryId').value = data.category.iCategoryId;
+                        document.getElementById('categoryName').value = data.category.sCategoryName;
+                        document.getElementById('categoryDescription').value = data.category.sDescription || '';
+                        document.getElementById('categoryImageUrl').value = data.category.imageUrl || '';
+                        
+                        // Preview image if exists
+                        if (data.category.imageUrl) {
+                            previewImage();
+                        }
+                        
+                        document.getElementById('categoryModal').style.display = 'block';
+                    } else {
+                        alert('Không thể lấy thông tin danh mục: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi lấy thông tin danh mục.');
                 });
         }
 
@@ -206,65 +233,96 @@
         }
 
         function saveCategory() {
+            const categoryId = document.getElementById('categoryId').value;
             const data = {
-                id: document.getElementById('categoryId').value,
-                name: document.getElementById('categoryName').value,
-                slug: document.getElementById('categorySlug').value,
-                description: document.getElementById('categoryDescription').value,
-                icon: document.getElementById('categoryIcon').value,
-                order: document.getElementById('categoryOrder').value,
-                isActive: document.getElementById('categoryActive').checked
+                ICategoryId: categoryId ? parseInt(categoryId) : 0,
+                SCategoryName: document.getElementById('categoryName').value.trim(),
+                SDescription: document.getElementById('categoryDescription').value.trim(),
+                ImageUrl: document.getElementById('categoryImageUrl').value.trim()
             };
 
-            const url = data.id ? '/Admin/UpdateCategory' : '/Admin/CreateCategory';
+            // Validation
+            if (!data.SCategoryName) {
+                alert('Vui lòng nhập tên danh mục');
+                return;
+            }
+
+            const url = categoryId ? '/Admin/UpdateCategory' : '/Admin/CreateCategory';
             
             fetch(url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                },
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    alert(data.id ? 'Cập nhật thành công!' : 'Thêm danh mục thành công!');
+                    alert(categoryId ? 'Cập nhật danh mục thành công!' : 'Thêm danh mục thành công!');
+                    closeCategoryModal();
                     location.reload();
                 } else {
-                    alert('Lỗi: ' + result.message);
+                    alert('Lỗi: ' + (result.message || 'Không thể lưu danh mục'));
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi lưu danh mục.');
             });
         }
 
         function deleteCategory(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
-                fetch(`/Admin/DeleteCategory?id=${id}`, { method: 'DELETE' })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success) {
-                            document.getElementById(`category-row-${id}`).remove();
-                            alert('Xóa thành công!');
-                        } else {
-                            alert('Lỗi: ' + result.message);
-                        }
-                    });
-            }
-        }
-
-        function moveUp(id) {
-            updateOrder(id, 'up');
-        }
-
-        function moveDown(id) {
-            updateOrder(id, 'down');
-        }
-
-        function updateOrder(id, direction) {
-            fetch(`/Admin/UpdateCategoryOrder?id=${id}&direction=${direction}`, { method: 'POST' })
+            if (confirm('Bạn có chắc chắn muốn xóa danh mục này?\n\nLưu ý: Các sản phẩm thuộc danh mục này sẽ không còn danh mục.')) {
+                fetch(`/Admin/DeleteCategory?id=${id}`, { 
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        location.reload();
+                        document.getElementById(`category-row-${id}`).remove();
+                        alert('Xóa danh mục thành công!');
+                        
+                        // Check if table is empty
+                        const tbody = document.querySelector('#categoryTable tbody');
+                        if (tbody.getElementsByTagName('tr').length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="6" class="text-center" style="padding: 40px;">
+                                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                                        <p class="text-muted mt-2">Chưa có danh mục nào</p>
+                                    </td>
+                                </tr>
+                            `;
+                        }
+                    } else {
+                        alert('Lỗi: ' + (result.message || 'Không thể xóa danh mục'));
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi xóa danh mục.');
                 });
+            }
         }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('categoryModal');
+            if (event.target === modal) {
+                closeCategoryModal();
+            }
+        }
+
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeCategoryModal();
+            }
+        });
     </script>
 }
