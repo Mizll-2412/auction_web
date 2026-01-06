@@ -1,0 +1,353 @@
+@model IEnumerable<BTL_LTWNC.Models.TblUser>
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var role = ViewBag.Role;
+}
+
+<style>
+    .avatar-sm {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        overflow: hidden;
+    }
+
+    .avatar-sm img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 5px;
+    }
+
+    .actions-bar {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        list-style: none;
+        gap: 5px;
+    }
+
+    .page-item {
+        margin: 0;
+    }
+
+    .page-link {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        color: #666;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .page-item.active .page-link {
+        background: #2196F3;
+        color: white;
+        border-color: #2196F3;
+    }
+
+    .page-link:hover {
+        background: #f5f5f5;
+    }
+
+    th {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    th:hover {
+        background: #e9ecef;
+    }
+</style>
+
+<div class="top-bar">
+    <h1 class="page-title">Quản lý tài khoản</h1>
+    <p class="page-subtitle">Danh sách người dùng trong hệ thống</p>
+</div>
+
+<div class="filter-section">
+    <div class="filter-group">
+        <label>Tìm kiếm</label>
+        <input type="text" id="searchInput" placeholder="Tìm theo tên, email..." class="form-control"
+            onkeyup="filterUsers()">
+    </div>
+    <div class="filter-group">
+        <label>Vai trò</label>
+        <select id="roleFilter" onchange="filterUsers()">
+            <option value="">Tất cả vai trò</option>
+            <option value="Quản trị viên">Quản trị viên</option>
+            <option value="Thành viên">Thành viên</option>
+            <option value="Người dùng">Người dùng</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Ngày tạo</label>
+        <select id="dateFilter" onchange="filterUsers()">
+            <option value="">Tất cả</option>
+            <option value="today">Hôm nay</option>
+            <option value="week">Tuần này</option>
+            <option value="month">Tháng này</option>
+            <option value="year">Năm nay</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Trạng thái</label>
+        <select id="statusFilter" onchange="filterUsers()">
+            <option value="">Tất cả</option>
+            <option value="active">Hoạt động</option>
+            <option value="inactive">Không hoạt động</option>
+            <option value="banned">Đã khóa</option>
+        </select>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button class="btn btn-secondary" onclick="clearFilters()">
+            <i class="bi bi-x-circle"></i> Xóa lọc
+        </button>
+    </div>
+</div>
+
+<!-- Actions Bar -->
+<div class="actions-bar mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <span class="text-muted">Hiển thị <strong id="showingCount">@Model.Count()</strong> /
+                <strong>@Model.Count()</strong> người dùng</span>
+        </div>
+        <div>
+            @if (role == "Quản trị viên")
+            {
+                <button class="btn btn-success" onclick="openAddForm()">
+                    <i class="bi bi-plus-circle"></i> Thêm người dùng
+                </button>
+                <button class="btn btn-primary" onclick="exportUsers()">
+                    <i class="bi bi-download"></i> Xuất Excel
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="data-table">
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                </th>
+                <th onclick="sortTable(1)">ID <i class="bi bi-arrow-down-up"></i></th>
+                <th onclick="sortTable(2)">Tên đầy đủ <i class="bi bi-arrow-down-up"></i></th>
+                <th onclick="sortTable(3)">Email <i class="bi bi-arrow-down-up"></i></th>
+                <th>Số điện thoại</th>
+                <th onclick="sortTable(5)">Vai trò <i class="bi bi-arrow-down-up"></i></th>
+                <th>Trạng thái</th>
+                @if (role == "Quản trị viên")
+                {
+                    <th>Thao tác</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="user-row-@item.IUserId" data-role="@item.SRole">
+                    <td>
+                        <input type="checkbox" class="user-checkbox" value="@item.IUserId">
+                    </td>
+                    <td>@item.IUserId</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm">
+
+                                <span>@item.SFullName?.Substring(0, 1)</span>
+
+                            </div>
+                            <span class="ms-2">@item.SFullName</span>
+                        </div>
+                    </td>
+                    <td>@item.SEmail</td>
+                    <td>@item.SPhoneNumber</td>
+                    <td>
+                        @if (item.SRole == "Quản trị viên")
+                        {
+                            <span class="badge badge-success">@item.SRole</span>
+                        }
+                        else if (item.SRole == "Thành viên")
+                        {
+                            <span class="badge badge-info">@item.SRole</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-secondary">@item.SRole</span>
+                        }
+                    </td>
+                    <td>
+                        <span class="badge badge-success">Hoạt động</span>
+                    </td>
+                    @if (role == "Quản trị viên")
+                    {
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-info" onclick="viewUser(@item.IUserId)" title="Xem">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="openEditModal(@item.IUserId)" title="Sửa">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="confirmDelete(@item.IUserId)" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination-container">
+    <nav>
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">«</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">»</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Add User Modal -->
+<div id="addForm" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Thêm người dùng mới</h3>
+            <button class="close-btn" onclick="closeAddForm()">&times;</button>
+        </div>
+        <form id="addUserForm" onsubmit="event.preventDefault(); addUser();">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="addFullName">Tên đầy đủ *</label>
+                        <input type="text" class="form-control" id="addFullName" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="addEmail">Email *</label>
+                        <input type="email" class="form-control" id="addEmail" required />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="addPass">Mật khẩu *</label>
+                        <input type="password" class="form-control" id="addPass" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="addPhone">Số điện thoại</label>
+                        <input type="text" class="form-control" id="addPhone" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="addRole">Vai trò *</label>
+                        <select class="form-control" id="addRole" required>
+                            <option value="">Chọn vai trò</option>
+                            <option value="Quản trị viên">Quản trị viên</option>
+                            <option value="Thành viên">Thành viên</option>
+                            <option value="Người dùng">Người dùng</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Key">Mã xác thực</label>
+                        <input type="text" class="form-control" id="Key" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeAddForm()">Hủy</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Thêm mới
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editForm" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Sửa thông tin người dùng</h3>
+            <button class="close-btn" onclick="closeEditForm()">&times;</button>
+        </div>
+        <form id="editUserForm" onsubmit="event.preventDefault(); updateUser();">
+            <input type="hidden" id="editUserId" />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="editFullName">Tên đầy đủ *</label>
+                        <input type="text" class="form-control" id="editFullName" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="editEmail">Email *</label>
+                        <input type="email" class="form-control" id="editEmail" required />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editRole">Vai trò *</label>
+                <select class="form-control" id="editRole" required>
+                    <option value="Quản trị viên">Quản trị viên</option>
+                    <option value="Thành viên">Thành viên</option>
+                    <option value="Người dùng">Người dùng</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditForm()">Hủy</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Cập nhật
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-users.js"></script>
+}

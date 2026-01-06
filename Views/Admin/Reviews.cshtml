@@ -1,0 +1,295 @@
+@model IEnumerable<BTL_LTWNC.Models.TblReview>
+@{
+    ViewData["Title"] = "Quản lý đánh giá";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="top-bar">
+    <h1 class="page-title">Quản lý đánh giá</h1>
+    <p class="page-subtitle">Quản lý đánh giá từ người dùng</p>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <div class="filter-group">
+        <label>Tìm kiếm</label>
+        <input type="text" id="searchInput" placeholder="Tìm theo sản phẩm, người dùng..." 
+               class="form-control" onkeyup="filterReviews()">
+    </div>
+    <div class="filter-group">
+        <label>Lọc theo sao</label>
+        <select id="starFilter" onchange="filterReviews()">
+            <option value="">Tất cả đánh giá</option>
+            <option value="5">⭐⭐⭐⭐⭐ (5 sao)</option>
+            <option value="4">⭐⭐⭐⭐ (4 sao)</option>
+            <option value="3">⭐⭐⭐ (3 sao)</option>
+            <option value="2">⭐⭐ (2 sao)</option>
+            <option value="1">⭐ (1 sao)</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Trạng thái</label>
+        <select id="statusFilter" onchange="filterReviews()">
+            <option value="">Tất cả trạng thái</option>
+            <option value="pending">Chờ duyệt</option>
+            <option value="approved">Đã duyệt</option>
+            <option value="rejected">Đã từ chối</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Sắp xếp</label>
+        <select id="sortFilter" onchange="filterReviews()">
+            <option value="newest">Mới nhất</option>
+            <option value="oldest">Cũ nhất</option>
+            <option value="highest">Đánh giá cao nhất</option>
+            <option value="lowest">Đánh giá thấp nhất</option>
+        </select>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button class="btn btn-secondary" onclick="clearFilters()">
+            <i class="bi bi-x-circle"></i> Xóa lọc
+        </button>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card-mini">
+            <h3>@Model.Count()</h3>
+            <p>Tổng đánh giá</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card-mini">
+            <h3>@ViewBag.AverageRating</h3>
+            <p>Trung bình</p>
+            <div class="stars-display">⭐⭐⭐⭐⭐</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card-mini bg-warning">
+            <h3>@ViewBag.PendingCount</h3>
+            <p>Chờ duyệt</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card-mini bg-success">
+            <h3>@ViewBag.ApprovedCount</h3>
+            <p>Đã duyệt</p>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Table -->
+<div class="data-table">
+    <table id="reviewsTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Người đánh giá</th>
+                <th>Sản phẩm</th>
+                <th>Đánh giá</th>
+                <th>Nội dung</th>
+                <th>Ngày tạo</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model)
+            {
+                <tr id="review-row-@review.IReviewId" data-rating="@review.IRating" data-status="@review.SStatus">
+                    <td>@review.IReviewId</td>
+                    <td>
+                        <div>
+                            <strong>@review.UserName</strong>
+                            <br>
+                            <small class="text-muted">@review.UserEmail</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            @if (!string.IsNullOrEmpty(review.ProductImage))
+                            {
+                                <img src="@review.ProductImage" class="product-thumb me-2" alt="product">
+                            }
+                            <span>@review.ProductName</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rating-display">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= review.IRating)
+                                {
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star text-muted"></i>
+                                }
+                            }
+                            <span class="ms-2">(@review.IRating/5)</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="review-content">
+                            @review.SComment
+                        </div>
+                    </td>
+                    <td>@review.DCreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        @if (review.SStatus == "pending")
+                        {
+                            <span class="badge bg-warning">Chờ duyệt</span>
+                        }
+                        else if (review.SStatus == "approved")
+                        {
+                            <span class="badge bg-success">Đã duyệt</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Đã từ chối</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            @if (review.SStatus == "pending")
+                            {
+                                <button class="btn btn-sm btn-success" onclick="approveReview(@review.IReviewId)" title="Duyệt">
+                                    <i class="bi bi-check-circle"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="rejectReview(@review.IReviewId)" title="Từ chối">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-info" onclick="viewReview(@review.IReviewId)" title="Xem">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteReview(@review.IReviewId)" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-reviews.js"></script>
+    <script>
+        function approveReview(id) {
+            if (confirm('Duyệt đánh giá này?')) {
+                fetch(`/Admin/ApproveReview?id=${id}`, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            location.reload();
+                        }
+                    });
+            }
+        }
+
+        function rejectReview(id) {
+            const reason = prompt('Lý do từ chối:');
+            if (reason) {
+                fetch(`/Admin/RejectReview`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, reason })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+        function deleteReview(id) {
+            if (confirm('Xóa đánh giá này?')) {
+                fetch(`/Admin/DeleteReview?id=${id}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            document.getElementById(`review-row-${id}`).remove();
+                        }
+                    });
+            }
+        }
+    </script>
+}
+
+<style>
+    .product-thumb {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .rating-display {
+        display: flex;
+        align-items: center;
+    }
+
+    .review-content {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .stat-card-mini {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .stat-card-mini h3 {
+        font-size: 32px;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .stat-card-mini p {
+        color: #666;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .stat-card-mini.bg-warning {
+        background: #FFC107;
+        color: white;
+    }
+
+    .stat-card-mini.bg-warning h3,
+    .stat-card-mini.bg-warning p {
+        color: white;
+    }
+
+    .stat-card-mini.bg-success {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .stat-card-mini.bg-success h3,
+    .stat-card-mini.bg-success p {
+        color: white;
+    }
+
+    .stars-display {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+</style>

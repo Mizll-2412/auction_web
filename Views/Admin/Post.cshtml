@@ -1,0 +1,406 @@
+@* @model IEnumerable<BTL_LTWNC.Models.TblPost>
+@{
+    ViewData["Title"] = "Quản lý bài đăng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var role = ViewBag.Role;
+}
+
+<style>
+    .post-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .nav-tabs {
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .nav-tabs .nav-link {
+        border: none;
+        color: #666;
+        padding: 12px 20px;
+        transition: all 0.3s;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #2196F3;
+        border-bottom: 2px solid #2196F3;
+        background: none;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #2196F3;
+    }
+
+    .modal-lg {
+        max-width: 900px;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .post-detail img {
+        max-width: 100%;
+        border-radius: 10px;
+    }
+</style>
+
+<div class="top-bar">
+    <h1 class="page-title">Quản lý bài đăng</h1>
+    <p class="page-subtitle">Danh sách bài đăng và yêu cầu đăng bài</p>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-3" id="postTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button">
+            <i class="bi bi-list-ul"></i> Tất cả bài đăng (@Model.Count())
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button">
+            <i class="bi bi-clock-history"></i> Chờ duyệt (@ViewBag.PendingCount)
+            @if (ViewBag.PendingCount > 0)
+            {
+                <span class="badge bg-warning ms-1">@ViewBag.PendingCount</span>
+            }
+        </button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="postTabContent">
+    <!-- All Posts Tab -->
+    <div class="tab-pane fade show active" id="all" role="tabpanel">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Tìm kiếm</label>
+                <input type="text" id="searchInput" placeholder="Tìm theo tiêu đề, tác giả..." 
+                       class="form-control" onkeyup="filterPosts()">
+            </div>
+            <div class="filter-group">
+                <label>Trạng thái</label>
+                <select id="statusFilter" onchange="filterPosts()">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="ongoing">Đang diễn ra</option>
+                    <option value="upcoming">Sắp diễn ra</option>
+                    <option value="future">Sẽ diễn ra</option>
+                    <option value="ended">Đã kết thúc</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Danh mục</label>
+                <select id="categoryFilter" onchange="filterPosts()">
+                    <option value="">Tất cả danh mục</option>
+                    <option value="1">Đấu giá</option>
+                    <option value="2">Từ thiện</option>
+                    <option value="3">Sự kiện</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Ngày đăng</label>
+                <select id="dateFilter" onchange="filterPosts()">
+                    <option value="">Tất cả</option>
+                    <option value="today">Hôm nay</option>
+                    <option value="week">Tuần này</option>
+                    <option value="month">Tháng này</option>
+                </select>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                    <i class="bi bi-x-circle"></i> Xóa lọc
+                </button>
+            </div>
+        </div>
+
+        <!-- Actions Bar -->
+        <div class="actions-bar mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted">Hiển thị <strong id="showingCount">@Model.Count()</strong> bài đăng</span>
+                </div>
+                <div>
+                    <button class="btn btn-success" onclick="openAddPostForm()">
+                        <i class="bi bi-plus-circle"></i> Thêm bài viết
+                    </button>
+                    <button class="btn btn-primary" onclick="exportPosts()">
+                        <i class="bi bi-download"></i> Xuất Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Table -->
+        <div class="data-table">
+            <table id="postsTable">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll"></th>
+                        <th onclick="sortTable(1)">ID <i class="bi bi-arrow-down-up"></i></th>
+                        <th onclick="sortTable(2)">Tiêu đề <i class="bi bi-arrow-down-up"></i></th>
+                        <th>Tác giả</th>
+                        <th>Danh mục</th>
+                        <th onclick="sortTable(5)">Ngày đăng <i class="bi bi-arrow-down-up"></i></th>
+                        <th>Trạng thái</th>
+                        <th>Lượt xem</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var post in Model)
+                    {
+                        <tr id="post-row-@post.IPostId" data-status="@post.SStatus">
+                            <td><input type="checkbox" class="post-checkbox" value="@post.IPostId"></td>
+                            <td>@post.IPostId</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(post.SImage))
+                                    {
+                                        <img src="@post.SImage" class="post-thumb me-2" alt="thumbnail">
+                                    }
+                                    <span>@post.STitle</span>
+                                </div>
+                            </td>
+                            <td>@post.AuthorName</td>
+                            <td><span class="badge badge-info">@post.CategoryName</span></td>
+                            <td>@post.DCreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                @if (post.SStatus == "ongoing")
+                                {
+                                    <span class="badge bg-success">Đang diễn ra</span>
+                                }
+                                else if (post.SStatus == "upcoming")
+                                {
+                                    <span class="badge bg-warning">Sắp diễn ra</span>
+                                }
+                                else if (post.SStatus == "future")
+                                {
+                                    <span class="badge bg-info">Sẽ diễn ra</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Đã kết thúc</span>
+                                }
+                            </td>
+                            <td>
+                                <i class="bi bi-eye"></i> @post.IViews
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-info" onclick="viewPost(@post.IPostId)" title="Xem">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="editPost(@post.IPostId)" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deletePost(@post.IPostId)" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pending Approval Tab -->
+    <div class="tab-pane fade" id="pending" role="tabpanel">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Có <strong>@ViewBag.PendingCount</strong> yêu cầu đăng bài đang chờ duyệt
+        </div>
+
+        <div class="data-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tiêu đề</th>
+                        <th>Tác giả</th>
+                        <th>Danh mục</th>
+                        <th>Ngày gửi</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var post in ViewBag.PendingPosts as IEnumerable<BTL_LTWNC.Models.TblAuction>)
+                    {
+                        <tr id="pending-post-@post.">
+                            <td>@post.IPostId</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(post.SImage))
+                                    {
+                                        <img src="@post.SImage" class="post-thumb me-2" alt="thumbnail">
+                                    }
+                                    <div>
+                                        <strong>@post.STitle</strong>
+                                        <br>
+                                        <small class="text-muted">@post.SDescription?.Substring(0, Math.Min(50, post.SDescription.Length))...</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <strong>@post.AuthorName</strong>
+                                    <br>
+                                    <small class="text-muted">@post.AuthorEmail</small>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-info">@post.CategoryName</span></td>
+                            <td>@post.DCreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><span class="badge bg-warning">Chờ duyệt</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-info" onclick="viewPendingPost(@post.IPostId)" title="Xem chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" onclick="approvePost(@post.IPostId)" title="Duyệt">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectPost(@post.IPostId)" title="Từ chối">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Post Detail Modal -->
+<div id="postDetailModal" class="modal">
+    <div class="modal-content modal-lg">
+        <div class="modal-header">
+            <h3>Chi tiết bài đăng</h3>
+            <button class="close-btn" onclick="closePostDetailModal()">&times;</button>
+        </div>
+        <div id="postDetailContent" class="modal-body">
+            <!-- Content loaded via AJAX -->
+        </div>
+    </div>
+</div>
+
+<!-- Approval Modal -->
+<div id="approvalModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Duyệt bài đăng</h3>
+            <button class="close-btn" onclick="closeApprovalModal()">&times;</button>
+        </div>
+        <form id="approvalForm" onsubmit="event.preventDefault(); submitApproval();">
+            <input type="hidden" id="approvalPostId">
+            <div class="form-group">
+                <label>Quyết định *</label>
+                <select id="approvalDecision" class="form-control" required>
+                    <option value="approve">Duyệt bài đăng</option>
+                    <option value="reject">Từ chối</option>
+                </select>
+            </div>
+            <div class="form-group" id="reasonGroup" style="display: none;">
+                <label>Lý do từ chối *</label>
+                <textarea id="rejectionReason" class="form-control" rows="4" 
+                          placeholder="Nhập lý do từ chối..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Ghi chú</label>
+                <textarea id="approvalNote" class="form-control" rows="3" 
+                          placeholder="Ghi chú thêm (tùy chọn)..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeApprovalModal()">Hủy</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Xác nhận
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-posts.js"></script>
+    <script>
+        // Toggle rejection reason field
+        document.getElementById('approvalDecision').addEventListener('change', function() {
+            const reasonGroup = document.getElementById('reasonGroup');
+            if (this.value === 'reject') {
+                reasonGroup.style.display = 'block';
+                document.getElementById('rejectionReason').required = true;
+            } else {
+                reasonGroup.style.display = 'none';
+                document.getElementById('rejectionReason').required = false;
+            }
+        });
+
+        function approvePost(postId) {
+            document.getElementById('approvalPostId').value = postId;
+            document.getElementById('approvalDecision').value = 'approve';
+            document.getElementById('reasonGroup').style.display = 'none';
+            document.getElementById('approvalModal').style.display = 'block';
+        }
+
+        function rejectPost(postId) {
+            document.getElementById('approvalPostId').value = postId;
+            document.getElementById('approvalDecision').value = 'reject';
+            document.getElementById('reasonGroup').style.display = 'block';
+            document.getElementById('approvalModal').style.display = 'block';
+        }
+
+        function submitApproval() {
+            const postId = document.getElementById('approvalPostId').value;
+            const decision = document.getElementById('approvalDecision').value;
+            const reason = document.getElementById('rejectionReason').value;
+            const note = document.getElementById('approvalNote').value;
+
+            fetch('/Admin/ApprovePost', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ postId, decision, reason, note })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert(decision === 'approve' ? 'Đã duyệt bài đăng!' : 'Đã từ chối bài đăng!');
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            });
+        }
+
+        function closeApprovalModal() {
+            document.getElementById('approvalModal').style.display = 'none';
+        }
+
+        function viewPendingPost(postId) {
+            fetch(`/Admin/GetPostDetail?postId=${postId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('postDetailContent').innerHTML = `
+                        <div class="post-detail">
+                            <h4>${data.title}</h4>
+                            <p class="text-muted">Tác giả: ${data.authorName} | ${data.createdAt}</p>
+                            <img src="${data.image}" class="img-fluid mb-3" />
+                            <div>${data.content}</div>
+                        </div>
+                    `;
+                    document.getElementById('postDetailModal').style.display = 'block';
+                });
+        }
+
+        function closePostDetailModal() {
+            document.getElementById('postDetailModal').style.display = 'none';
+        }
+    </script>
+} *@

@@ -1,0 +1,270 @@
+@model IEnumerable<BTL_LTWNC.Models.TblCategory>
+@{
+    ViewData["Title"] = "Quản lý danh mục";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .order-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    code {
+        background: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: #e83e8c;
+    }
+</style>
+
+<div class="top-bar">
+    <h1 class="page-title">Quản lý danh mục</h1>
+    <p class="page-subtitle">Quản lý danh mục sản phẩm và bài viết</p>
+</div>
+
+<div class="actions-bar mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <input type="text" id="searchCategory" placeholder="Tìm kiếm danh mục..." 
+                   class="form-control" onkeyup="searchCategories()">
+        </div>
+        <div>
+            <button class="btn btn-success" onclick="openAddCategoryForm()">
+                <i class="bi bi-plus-circle"></i> Thêm danh mục
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="data-table">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên danh mục</th>
+                <th>Slug</th>
+                <th>Mô tả</th>
+                <th>Số lượng sản phẩm</th>
+                <th>Trạng thái</th>
+                <th>Thứ tự hiển thị</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr id="category-row-@category.ICategoryId">
+                    <td>@category.ICategoryId</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            @if (!string.IsNullOrEmpty(category.SIcon))
+                            {
+                                <i class="@category.SIcon me-2 fs-5"></i>
+                            }
+                            <strong>@category.SCategoryName</strong>
+                        </div>
+                    </td>
+                    <td><code>@category.SSlug</code></td>
+                    <td>@category.SDescription</td>
+                    <td>
+                        <span class="badge bg-primary">@category.ProductCount</span>
+                    </td>
+                    <td>
+                        @if (category.BIsActive)
+                        {
+                            <span class="badge bg-success">Hoạt động</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Ẩn</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="order-controls">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="moveUp(@category.ICategoryId)">
+                                <i class="bi bi-arrow-up"></i>
+                            </button>
+                            <span class="mx-2">@category.IOrder</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="moveDown(@category.ICategoryId)">
+                                <i class="bi bi-arrow-down"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-warning" onclick="editCategory(@category.ICategoryId)">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteCategory(@category.ICategoryId)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Add/Edit Category Modal -->
+<div id="categoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="categoryModalTitle">Thêm danh mục</h3>
+            <button class="close-btn" onclick="closeCategoryModal()">&times;</button>
+        </div>
+        <form id="categoryForm" onsubmit="event.preventDefault(); saveCategory();">
+            <input type="hidden" id="categoryId">
+            <div class="form-group">
+                <label for="categoryName">Tên danh mục *</label>
+                <input type="text" class="form-control" id="categoryName" required>
+            </div>
+            <div class="form-group">
+                <label for="categorySlug">Slug (URL thân thiện)</label>
+                <input type="text" class="form-control" id="categorySlug">
+                <small class="text-muted">Tự động tạo từ tên danh mục</small>
+            </div>
+            <div class="form-group">
+                <label for="categoryDescription">Mô tả</label>
+                <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="categoryIcon">Icon (Bootstrap Icons)</label>
+                        <input type="text" class="form-control" id="categoryIcon" placeholder="bi bi-box-seam">
+                        <small class="text-muted">Ví dụ: bi bi-box-seam, bi bi-star</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="categoryOrder">Thứ tự hiển thị</label>
+                        <input type="number" class="form-control" id="categoryOrder" value="0">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="categoryActive" checked>
+                    <label class="form-check-label" for="categoryActive">
+                        Kích hoạt danh mục này
+                    </label>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Hủy</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Lưu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-generate slug from category name
+        document.getElementById('categoryName').addEventListener('input', function() {
+            const slug = this.value
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[đĐ]/g, 'd')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
+            document.getElementById('categorySlug').value = slug;
+        });
+
+        function openAddCategoryForm() {
+            document.getElementById('categoryModalTitle').textContent = 'Thêm danh mục';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryModal').style.display = 'block';
+        }
+
+        function editCategory(id) {
+            fetch(`/Admin/GetCategoryDetail?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('categoryModalTitle').textContent = 'Sửa danh mục';
+                    document.getElementById('categoryId').value = data.id;
+                    document.getElementById('categoryName').value = data.name;
+                    document.getElementById('categorySlug').value = data.slug;
+                    document.getElementById('categoryDescription').value = data.description;
+                    document.getElementById('categoryIcon').value = data.icon;
+                    document.getElementById('categoryOrder').value = data.order;
+                    document.getElementById('categoryActive').checked = data.isActive;
+                    document.getElementById('categoryModal').style.display = 'block';
+                });
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+
+        function saveCategory() {
+            const data = {
+                id: document.getElementById('categoryId').value,
+                name: document.getElementById('categoryName').value,
+                slug: document.getElementById('categorySlug').value,
+                description: document.getElementById('categoryDescription').value,
+                icon: document.getElementById('categoryIcon').value,
+                order: document.getElementById('categoryOrder').value,
+                isActive: document.getElementById('categoryActive').checked
+            };
+
+            const url = data.id ? '/Admin/UpdateCategory' : '/Admin/CreateCategory';
+            
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert(data.id ? 'Cập nhật thành công!' : 'Thêm danh mục thành công!');
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            });
+        }
+
+        function deleteCategory(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
+                fetch(`/Admin/DeleteCategory?id=${id}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            document.getElementById(`category-row-${id}`).remove();
+                            alert('Xóa thành công!');
+                        } else {
+                            alert('Lỗi: ' + result.message);
+                        }
+                    });
+            }
+        }
+
+        function moveUp(id) {
+            updateOrder(id, 'up');
+        }
+
+        function moveDown(id) {
+            updateOrder(id, 'down');
+        }
+
+        function updateOrder(id, direction) {
+            fetch(`/Admin/UpdateCategoryOrder?id=${id}&direction=${direction}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        location.reload();
+                    }
+                });
+        }
+    </script>
+}
