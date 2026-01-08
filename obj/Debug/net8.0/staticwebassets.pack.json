@@ -81,6 +81,18 @@
       "PackagePath": "staticwebassets\\js\\admin-dashboard.js"
     },
     {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\admin-posts.js",
+      "PackagePath": "staticwebassets\\js\\admin-posts.js"
+    },
+    {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\admin-reviews.js",
+      "PackagePath": "staticwebassets\\js\\admin-reviews.js"
+    },
+    {
+      "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\admin-users.js",
+      "PackagePath": "staticwebassets\\js\\admin-users.js"
+    },
+    {
       "Id": "D:\\BTL_WEB_NC\\BTL_LTWNC\\wwwroot\\js\\home\\product.js",
       "PackagePath": "staticwebassets\\js\\home\\product.js"
     },

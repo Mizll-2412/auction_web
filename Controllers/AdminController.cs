@@ -9,10 +9,11 @@ namespace BTL_LTWNC.Controllers
     public class AdminController : Controller
     {
         private readonly IUserRepository _userRepo;
-
-        public AdminController(IUserRepository userRepo)
+        private readonly IReviewRepository _reviewRepo;
+        public AdminController(IUserRepository userRepo, IReviewRepository reviewRepository)
         {
             _userRepo = userRepo;
+            _reviewRepo = reviewRepository;
         }
 
         // =======================
@@ -87,7 +88,7 @@ namespace BTL_LTWNC.Controllers
             if (string.IsNullOrEmpty(user.SEmail) || string.IsNullOrEmpty(user.SPassword))
                 return Json(new { success = false, message = "Thiếu dữ liệu" });
 
-            // ⚠️ DEMO: nên hash password ở đây
+            //  DEMO: nên hash password ở đây
             _userRepo.Add(user);
 
             return Json(new

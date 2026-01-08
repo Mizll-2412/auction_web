@@ -4,230 +4,6 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="top-bar">
-    <h1 class="page-title">Quản lý đánh giá</h1>
-    <p class="page-subtitle">Quản lý đánh giá từ người dùng</p>
-</div>
-
-<!-- Filter Section -->
-<div class="filter-section">
-    <div class="filter-group">
-        <label>Tìm kiếm</label>
-        <input type="text" id="searchInput" placeholder="Tìm theo sản phẩm, người dùng..." 
-               class="form-control" onkeyup="filterReviews()">
-    </div>
-    <div class="filter-group">
-        <label>Lọc theo sao</label>
-        <select id="starFilter" onchange="filterReviews()">
-            <option value="">Tất cả đánh giá</option>
-            <option value="5">⭐⭐⭐⭐⭐ (5 sao)</option>
-            <option value="4">⭐⭐⭐⭐ (4 sao)</option>
-            <option value="3">⭐⭐⭐ (3 sao)</option>
-            <option value="2">⭐⭐ (2 sao)</option>
-            <option value="1">⭐ (1 sao)</option>
-        </select>
-    </div>
-    <div class="filter-group">
-        <label>Trạng thái</label>
-        <select id="statusFilter" onchange="filterReviews()">
-            <option value="">Tất cả trạng thái</option>
-            <option value="pending">Chờ duyệt</option>
-            <option value="approved">Đã duyệt</option>
-            <option value="rejected">Đã từ chối</option>
-        </select>
-    </div>
-    <div class="filter-group">
-        <label>Sắp xếp</label>
-        <select id="sortFilter" onchange="filterReviews()">
-            <option value="newest">Mới nhất</option>
-            <option value="oldest">Cũ nhất</option>
-            <option value="highest">Đánh giá cao nhất</option>
-            <option value="lowest">Đánh giá thấp nhất</option>
-        </select>
-    </div>
-    <div>
-        <label>&nbsp;</label>
-        <button class="btn btn-secondary" onclick="clearFilters()">
-            <i class="bi bi-x-circle"></i> Xóa lọc
-        </button>
-    </div>
-</div>
-
-<!-- Stats Row -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="stat-card-mini">
-            <h3>@Model.Count()</h3>
-            <p>Tổng đánh giá</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card-mini">
-            <h3>@ViewBag.AverageRating</h3>
-            <p>Trung bình</p>
-            <div class="stars-display">⭐⭐⭐⭐⭐</div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card-mini bg-warning">
-            <h3>@ViewBag.PendingCount</h3>
-            <p>Chờ duyệt</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card-mini bg-success">
-            <h3>@ViewBag.ApprovedCount</h3>
-            <p>Đã duyệt</p>
-        </div>
-    </div>
-</div>
-
-<!-- Reviews Table -->
-<div class="data-table">
-    <table id="reviewsTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Người đánh giá</th>
-                <th>Sản phẩm</th>
-                <th>Đánh giá</th>
-                <th>Nội dung</th>
-                <th>Ngày tạo</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var review in Model)
-            {
-                <tr id="review-row-@review.IReviewId" data-rating="@review.IRating" data-status="@review.SStatus">
-                    <td>@review.IReviewId</td>
-                    <td>
-                        <div>
-                            <strong>@review.UserName</strong>
-                            <br>
-                            <small class="text-muted">@review.UserEmail</small>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            @if (!string.IsNullOrEmpty(review.ProductImage))
-                            {
-                                <img src="@review.ProductImage" class="product-thumb me-2" alt="product">
-                            }
-                            <span>@review.ProductName</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="rating-display">
-                            @for (int i = 1; i <= 5; i++)
-                            {
-                                if (i <= review.IRating)
-                                {
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                }
-                                else
-                                {
-                                    <i class="bi bi-star text-muted"></i>
-                                }
-                            }
-                            <span class="ms-2">(@review.IRating/5)</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="review-content">
-                            @review.SComment
-                        </div>
-                    </td>
-                    <td>@review.DCreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>
-                        @if (review.SStatus == "pending")
-                        {
-                            <span class="badge bg-warning">Chờ duyệt</span>
-                        }
-                        else if (review.SStatus == "approved")
-                        {
-                            <span class="badge bg-success">Đã duyệt</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">Đã từ chối</span>
-                        }
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            @if (review.SStatus == "pending")
-                            {
-                                <button class="btn btn-sm btn-success" onclick="approveReview(@review.IReviewId)" title="Duyệt">
-                                    <i class="bi bi-check-circle"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="rejectReview(@review.IReviewId)" title="Từ chối">
-                                    <i class="bi bi-x-circle"></i>
-                                </button>
-                            }
-                            else
-                            {
-                                <button class="btn btn-sm btn-info" onclick="viewReview(@review.IReviewId)" title="Xem">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteReview(@review.IReviewId)" title="Xóa">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-@section Scripts {
-    <script src="~/js/admin-reviews.js"></script>
-    <script>
-        function approveReview(id) {
-            if (confirm('Duyệt đánh giá này?')) {
-                fetch(`/Admin/ApproveReview?id=${id}`, { method: 'POST' })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success) {
-                            location.reload();
-                        }
-                    });
-            }
-        }
-
-        function rejectReview(id) {
-            const reason = prompt('Lý do từ chối:');
-            if (reason) {
-                fetch(`/Admin/RejectReview`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, reason })
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        location.reload();
-                    }
-                });
-            }
-        }
-
-        function deleteReview(id) {
-            if (confirm('Xóa đánh giá này?')) {
-                fetch(`/Admin/DeleteReview?id=${id}`, { method: 'DELETE' })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success) {
-                            document.getElementById(`review-row-${id}`).remove();
-                        }
-                    });
-            }
-        }
-    </script>
-}
-
 <style>
     .product-thumb {
         width: 40px;
@@ -239,6 +15,7 @@
     .rating-display {
         display: flex;
         align-items: center;
+        gap: 2px;
     }
 
     .review-content {
@@ -252,7 +29,7 @@
         background: white;
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         text-align: center;
     }
 
@@ -291,5 +68,460 @@
     .stars-display {
         font-size: 14px;
         margin-top: 5px;
+        color: #FFC107;
+    }
+
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
     }
 </style>
+
+<div class="top-bar">
+    <h1 class="page-title">Quản lý đánh giá</h1>
+    <p class="page-subtitle">Quản lý đánh giá từ người dùng</p>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <div class="filter-group">
+        <label>Tìm kiếm</label>
+        <input type="text" id="searchInput" placeholder="Tìm theo sản phẩm, người dùng..." class="form-control"
+            onkeyup="filterReviews()">
+    </div>
+    <div class="filter-group">
+        <label>Lọc theo sao</label>
+        <select id="starFilter" onchange="filterReviews()">
+            <option value="">Tất cả đánh giá</option>
+            <option value="5">⭐⭐⭐⭐⭐ (5 sao)</option>
+            <option value="4">⭐⭐⭐⭐ (4 sao)</option>
+            <option value="3">⭐⭐⭐ (3 sao)</option>
+            <option value="2">⭐⭐ (2 sao)</option>
+            <option value="1">⭐ (1 sao)</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Thời gian</label>
+        <select id="timeFilter" onchange="filterReviews()">
+            <option value="">Tất cả</option>
+            <option value="today">Hôm nay</option>
+            <option value="week">Tuần này</option>
+            <option value="month">Tháng này</option>
+            <option value="year">Năm nay</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label>Sắp xếp</label>
+        <select id="sortFilter" onchange="sortReviews()">
+            <option value="newest">Mới nhất</option>
+            <option value="oldest">Cũ nhất</option>
+            <option value="highest">Đánh giá cao nhất</option>
+            <option value="lowest">Đánh giá thấp nhất</option>
+        </select>
+    </div>
+    <div>
+        <label>&nbsp;</label>
+        <button class="btn btn-secondary" onclick="clearFilters()">
+            <i class="bi bi-x-circle"></i> Xóa lọc
+        </button>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card-mini">
+            <h3>@(Model?.Count() ?? 0)</h3>
+            <p>Tổng đánh giá</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card-mini">
+            <h3>@(Model?.Any() == true ? Model.Average(r => r.IRating ?? 0).ToString("0.0") : "0.0")</h3>
+            <p>Trung bình</p>
+            <div class="stars-display">
+                @{
+                    var avgRating = Model?.Any() == true ? Model.Average(r => r.IRating ?? 0) : 0;
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= Math.Round(avgRating))
+                        {
+                            <i class="bi bi-star-fill"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-star"></i>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card-mini bg-warning">
+            <h3>@(Model?.Count(r => r.IRating == 5) ?? 0)</h3>
+            <p>5 Sao</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card-mini bg-success">
+            <h3>@(Model?.Count(r => r.IRating >= 4) ?? 0)</h3>
+            <p>4+ Sao</p>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Table -->
+<div class="data-table">
+    <div class="table-header">
+        <h3>Danh sách đánh giá (@(Model?.Count() ?? 0))</h3>
+        <div>
+            <span class="text-muted me-3">Hiển thị: <strong id="showingCount">@(Model?.Count() ?? 0)</strong></span>
+            <button class="btn btn-primary btn-sm" onclick="exportReviews()">
+                <i class="bi bi-download"></i> Xuất Excel
+            </button>
+        </div>
+    </div>
+    <table id="reviewsTable">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                <th>ID</th>
+                <th>Người đánh giá</th>
+                <th>Sản phẩm</th>
+                <th>Đánh giá</th>
+                <th>Nội dung</th>
+                <th>Thời gian</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var review in Model)
+                {
+                    <tr id="review-row-@review.IReviewId" data-rating="@review.IRating"
+                        data-date="@review.DtReviewTime?.ToString("yyyy-MM-dd")">
+                        <td>
+                            <input type="checkbox" class="review-checkbox" value="@review.IReviewId">
+                        </td>
+                        <td>@review.IReviewId</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar bg-primary text-white d-flex align-items-center justify-content-center">
+                                    @(review.IReviewer?.SFullName?.Substring(0, 1) ?? "?")
+                                </div>
+                                <div>
+                                    <strong>@(review.IReviewer?.SFullName ?? "N/A")</strong>
+                                    <br>
+                                    <small class="text-muted">@(review.IReviewer?.SEmail ?? "")</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(review.IProduct?.SImageUrl))
+                                {
+                                    <img src="@review.IProduct.SImageUrl" class="product-thumb me-2" alt="product">
+                                }
+                                else
+                                {
+                                    <div
+                                        class="product-thumb me-2 bg-secondary d-flex align-items-center justify-content-center text-white">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                }
+                                <span>@(review.IProduct?.SProductName ?? "Sản phẩm đã xóa")</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="rating-display">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= (review.IRating ?? 0))
+                                    {
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-star text-muted"></i>
+                                    }
+                                }
+                                <span class="ms-2">(@(review.IRating ?? 0)/5)</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="review-content" title="@review.SComment">
+                                @(review.SComment ?? "Không có nhận xét")
+                            </div>
+                        </td>
+                        <td>@review.DtReviewTime?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-info" onclick="viewReview(@review.IReviewId)"
+                                    title="Xem chi tiết">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteReview(@review.IReviewId)" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center" style="padding: 40px;">
+                        <i class="bi bi-chat-quote fs-1 text-muted"></i>
+                        <p class="text-muted mt-2">Chưa có đánh giá nào</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination-container mt-3">
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="#">«</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">»</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Review Detail Modal -->
+<div id="reviewDetailModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Chi tiết đánh giá</h3>
+            <button class="close-btn" onclick="closeReviewModal()">&times;</button>
+        </div>
+        <div id="reviewDetailContent" class="modal-body">
+            <!-- Content loaded via JS -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterReviews() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const starFilter = document.getElementById('starFilter').value;
+            const timeFilter = document.getElementById('timeFilter').value;
+
+            const rows = document.querySelectorAll('#reviewsTable tbody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                if (row.cells.length < 8) return; // Skip empty row
+
+                const rating = row.getAttribute('data-rating');
+                const dateStr = row.getAttribute('data-date');
+                const reviewer = row.cells[2].textContent.toLowerCase();
+                const product = row.cells[3].textContent.toLowerCase();
+                const comment = row.cells[5].textContent.toLowerCase();
+
+                let showRow = true;
+
+                // Search filter
+                if (searchInput && !reviewer.includes(searchInput) &&
+                    !product.includes(searchInput) && !comment.includes(searchInput)) {
+                    showRow = false;
+                }
+
+                // Star filter
+                if (starFilter && rating !== starFilter) {
+                    showRow = false;
+                }
+
+                // Time filter
+                if (timeFilter && dateStr) {
+                    const reviewDate = new Date(dateStr);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    switch (timeFilter) {
+                        case 'today':
+                            if (reviewDate.toDateString() !== today.toDateString()) showRow = false;
+                            break;
+                        case 'week':
+                            const weekAgo = new Date(today);
+                            weekAgo.setDate(weekAgo.getDate() - 7);
+                            if (reviewDate < weekAgo) showRow = false;
+                            break;
+                        case 'month':
+                            const monthAgo = new Date(today);
+                            monthAgo.setMonth(monthAgo.getMonth() - 1);
+                            if (reviewDate < monthAgo) showRow = false;
+                            break;
+                        case 'year':
+                            const yearAgo = new Date(today);
+                            yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+                            if (reviewDate < yearAgo) showRow = false;
+                            break;
+                    }
+                }
+
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
+            });
+
+            document.getElementById('showingCount').textContent = visibleCount;
+        }
+
+        function sortReviews() {
+            const sortValue = document.getElementById('sortFilter').value;
+            const tbody = document.querySelector('#reviewsTable tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.cells.length >= 8);
+
+            rows.sort((a, b) => {
+                switch (sortValue) {
+                    case 'newest':
+                        const dateA = new Date(a.getAttribute('data-date') || 0);
+                        const dateB = new Date(b.getAttribute('data-date') || 0);
+                        return dateB - dateA;
+                    case 'oldest':
+                        const dateA2 = new Date(a.getAttribute('data-date') || 0);
+                        const dateB2 = new Date(b.getAttribute('data-date') || 0);
+                        return dateA2 - dateB2;
+                    case 'highest':
+                        const ratingA = parseInt(a.getAttribute('data-rating') || 0);
+                        const ratingB = parseInt(b.getAttribute('data-rating') || 0);
+                        return ratingB - ratingA;
+                    case 'lowest':
+                        const ratingA2 = parseInt(a.getAttribute('data-rating') || 0);
+                        const ratingB2 = parseInt(b.getAttribute('data-rating') || 0);
+                        return ratingA2 - ratingB2;
+                    default:
+                        return 0;
+                }
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('starFilter').value = '';
+            document.getElementById('timeFilter').value = '';
+            document.getElementById('sortFilter').value = 'newest';
+            filterReviews();
+        }
+
+        function viewReview(id) {
+            fetch(`/Admin/GetReviewDetail?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const stars = Array(5).fill(0).map((_, i) =>
+                            i < data.review.rating ? '<i class="bi bi-star-fill text-warning"></i>' : '<i class="bi bi-star text-muted"></i>'
+                        ).join('');
+
+                        document.getElementById('reviewDetailContent').innerHTML = `
+                                <div class="review-detail">
+                                    <div class="mb-3">
+                                        <h5>Sản phẩm: ${data.review.productName}</h5>
+                                        <p class="text-muted">Người đánh giá: ${data.review.reviewerName} (${data.review.reviewerEmail})</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Đánh giá:</label>
+                                        <div>${stars} (${data.review.rating}/5)</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold">Nhận xét:</label>
+                                        <p>${data.review.comment || 'Không có nhận xét'}</p>
+                                    </div>
+                                    <div>
+                                        <label class="fw-bold">Thời gian:</label>
+                                        <p>${data.review.reviewTime}</p>
+                                    </div>
+                                </div>
+                            `;
+                        document.getElementById('reviewDetailModal').style.display = 'block';
+                    } else {
+                        alert('Không thể lấy thông tin đánh giá');
+                    }
+                })
+                .catch(() => alert('Đã xảy ra lỗi'));
+        }
+
+        function deleteReview(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa đánh giá này?')) {
+                fetch(`/Admin/DeleteReview?id=${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            document.getElementById(`review-row-${id}`).remove();
+                            alert('Xóa đánh giá thành công!');
+
+                            // Check if table is empty
+                            const tbody = document.querySelector('#reviewsTable tbody');
+                            if (tbody.querySelectorAll('tr').length === 0) {
+                                tbody.innerHTML = `
+                                    <tr>
+                                        <td colspan="8" class="text-center" style="padding: 40px;">
+                                            <i class="bi bi-chat-quote fs-1 text-muted"></i>
+                                            <p class="text-muted mt-2">Chưa có đánh giá nào</p>
+                                        </td>
+                                    </tr>
+                                `;
+                            }
+
+                            // Update count
+                            filterReviews();
+                        } else {
+                            alert('Lỗi: ' + result.message);
+                        }
+                    })
+                    .catch(() => alert('Đã xảy ra lỗi khi xóa đánh giá'));
+            }
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewDetailModal').style.display = 'none';
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.review-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        }
+
+        function exportReviews() {
+            const selected = Array.from(document.querySelectorAll('.review-checkbox:checked'))
+                .map(cb => cb.value);
+
+            if (selected.length > 0) {
+                window.location.href = `/Admin/ExportReviews?ids=${selected.join(',')}`;
+            } else {
+                window.location.href = '/Admin/ExportReviews';
+            }
+        }
+
+        // Close modal events
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeReviewModal();
+            }
+        });
+    </script>
+}

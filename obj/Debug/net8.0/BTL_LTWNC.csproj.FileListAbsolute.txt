@@ -145,3 +145,11 @@ D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\refint\BTL_LTWNC.dll
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.pdb
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\BTL_LTWNC.genruntimeconfig.cache
 D:\BTL_WEB_NC\BTL_LTWNC\obj\Debug\net8.0\ref\BTL_LTWNC.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\EPPlus.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\EPPlus.Interfaces.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Json.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\Microsoft.IO.RecyclableMemoryStream.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
+D:\BTL_WEB_NC\BTL_LTWNC\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
