@@ -1,6 +1,7 @@
 @{
     var userName = Context.Session.GetString("FullName");
     var userRole = Context.Session.GetString("Role");
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -23,22 +24,28 @@
                 <p>@userRole</p>
             </div>
             <nav class="sidebar-menu">
-                <a asp-controller="Admin" asp-action="Dashboard" class="menu-item @(ViewContext.RouteData.Values["Action"].ToString() == "Dashboard" ? "active" : "")">
+                <a asp-controller="Admin" asp-action="Dashboard" 
+                   class="menu-item @(currentAction == "Dashboard" ? "active" : "")">
                     <i class="bi bi-speedometer2 me-2"></i> Thống kê
                 </a>
-                <a asp-controller="Admin" asp-action="Users" class="menu-item @(ViewContext.RouteData.Values["Action"].ToString() == "Users" ? "active" : "")">
+                <a asp-controller="Admin" asp-action="Users" 
+                   class="menu-item @(currentAction == "Users" || currentAction == "UserList" ? "active" : "")">
                     <i class="bi bi-people me-2"></i> Quản lý tài khoản
                 </a>
-                <a asp-controller="Admin" asp-action="Posts" class="menu-item @(ViewContext.RouteData.Values["Action"].ToString() == "Posts" ? "active" : "")">
+                <a asp-controller="Admin" asp-action="Posts" 
+                   class="menu-item @(currentAction == "Posts" ? "active" : "")">
                     <i class="bi bi-file-text me-2"></i> Quản lý bài đăng
                 </a>
-                <a asp-controller="Admin" asp-action="Categories" class="menu-item @(ViewContext.RouteData.Values["Action"].ToString() == "Categories" ? "active" : "")">
+                <a asp-controller="Admin" asp-action="Categories" 
+                   class="menu-item @(currentAction == "Categories" ? "active" : "")">
                     <i class="bi bi-tags me-2"></i> Danh mục
                 </a>
-                <a asp-controller="Admin" asp-action="Products" class="menu-item @(ViewContext.RouteData.Values["Action"].ToString() == "Products" ? "active" : "")">
+                <a asp-controller="Admin" asp-action="Products" 
+                   class="menu-item @(currentAction == "Products" ? "active" : "")">
                     <i class="bi bi-box-seam me-2"></i> Sản phẩm
                 </a>
-                <a asp-controller="Admin" asp-action="Reviews" class="menu-item @(ViewContext.RouteData.Values["Action"].ToString() == "Reviews" ? "active" : "")">
+                <a asp-controller="Admin" asp-action="Reviews" 
+                   class="menu-item @(currentAction == "Reviews" ? "active" : "")">
                     <i class="bi bi-star-fill me-2"></i> Reviews
                 </a>
                 <hr class="sidebar-divider">
@@ -75,5 +82,10 @@
 
     .menu-item.text-danger {
         color: #ff6b6b !important;
+    }
+
+    .menu-item.text-muted:hover,
+    .menu-item.text-danger:hover {
+        background: rgba(255,255,255,0.1);
     }
 </style>
