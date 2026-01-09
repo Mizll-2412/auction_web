@@ -10,6 +10,7 @@ namespace BTL_LTWNC.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly IReviewRepository _reviewRepo;
+
         public AdminController(IUserRepository userRepo, IReviewRepository reviewRepository)
         {
             _userRepo = userRepo;
@@ -38,9 +39,26 @@ namespace BTL_LTWNC.Controllers
         }
 
         // =======================
-        // VIEW: USER LIST
+        // DASHBOARD (Trang chủ Admin)
         // =======================
-        public IActionResult UserList()
+        public IActionResult Dashboard()
+        {
+            var check = CheckLoginAndRole();
+            if (check != null) return check;
+
+            ViewBag.Role = HttpContext.Session.GetString("Role");
+            
+            // TODO: Thêm logic thống kê
+            ViewBag.TotalUsers = _userRepo.GetMembers().Count();
+            ViewBag.TotalReviews = _reviewRepo.GetAll().Count();
+            
+            return View();
+        }
+
+        // =======================
+        // USERS MANAGEMENT
+        // =======================
+        public IActionResult Users()
         {
             var check = CheckLoginAndRole();
             if (check != null) return check;
@@ -50,9 +68,12 @@ namespace BTL_LTWNC.Controllers
             return View(users);
         }
 
-        // =======================
-        // GET USER DETAIL (AJAX)
-        // =======================
+        // Giữ nguyên để backward compatible
+        public IActionResult UserList()
+        {
+            return RedirectToAction("Users");
+        }
+
         [HttpGet]
         public IActionResult GetUserDetails(int userId)
         {
@@ -76,9 +97,6 @@ namespace BTL_LTWNC.Controllers
             });
         }
 
-        // =======================
-        // ADD USER (AJAX)
-        // =======================
         [HttpPost]
         public IActionResult AddUser([FromBody] TblUser user)
         {
@@ -88,7 +106,6 @@ namespace BTL_LTWNC.Controllers
             if (string.IsNullOrEmpty(user.SEmail) || string.IsNullOrEmpty(user.SPassword))
                 return Json(new { success = false, message = "Thiếu dữ liệu" });
 
-            //  DEMO: nên hash password ở đây
             _userRepo.Add(user);
 
             return Json(new
@@ -104,9 +121,6 @@ namespace BTL_LTWNC.Controllers
             });
         }
 
-        // =======================
-        // UPDATE USER (AJAX)
-        // =======================
         [HttpPost]
         public IActionResult UpdateUser([FromBody] TblUser model)
         {
@@ -126,9 +140,6 @@ namespace BTL_LTWNC.Controllers
             return Json(new { success = true });
         }
 
-        // =======================
-        // DELETE USER (AJAX)
-        // =======================
         [HttpDelete]
         public IActionResult DeleteUserAJAX(int userId)
         {
@@ -142,6 +153,124 @@ namespace BTL_LTWNC.Controllers
             _userRepo.Delete(user.SEmail);
 
             return Json(new { success = true });
+        }
+
+        // =======================
+        // POSTS MANAGEMENT
+        // =======================
+        public IActionResult Posts()
+        {
+            var check = CheckLoginAndRole();
+            if (check != null) return check;
+
+            ViewBag.Role = HttpContext.Session.GetString("Role");
+            
+            // TODO: Lấy danh sách posts từ repository/dbcontext
+            var posts = new List<object>(); // Tạm thời trả về empty
+            
+            return View(posts);
+        }
+
+        // =======================
+        // CATEGORIES MANAGEMENT
+        // =======================
+        public IActionResult Categories()
+        {
+            var check = CheckLoginAndRole();
+            if (check != null) return check;
+
+            ViewBag.Role = HttpContext.Session.GetString("Role");
+            
+            // TODO: Lấy danh sách categories
+            var categories = new List<object>();
+            
+            return View(categories);
+        }
+
+        // =======================
+        // PRODUCTS MANAGEMENT
+        // =======================
+        public IActionResult Products()
+        {
+            var check = CheckLoginAndRole();
+            if (check != null) return check;
+
+            ViewBag.Role = HttpContext.Session.GetString("Role");
+            
+            // TODO: Lấy danh sách products
+            var products = new List<object>();
+            
+            return View(products);
+        }
+
+        // =======================
+        // REVIEWS MANAGEMENT
+        // =======================
+        public IActionResult Reviews()
+        {
+            var check = CheckLoginAndRole();
+            if (check != null) return check;
+
+            ViewBag.Role = HttpContext.Session.GetString("Role");
+            var reviews = _reviewRepo.GetAll();
+            
+            return View(reviews);
+        }
+
+        [HttpGet]
+        public IActionResult GetReviewDetail(int id)
+        {
+            if (!IsAdmin())
+                return Json(new { success = false, message = "Không có quyền" });
+
+            try
+            {
+                var review = _reviewRepo.GetById(id);
+                
+                if (review == null)
+                    return Json(new { success = false, message = "Không tìm thấy đánh giá" });
+
+                return Json(new
+                {
+                    success = true,
+                    review = new
+                    {
+                        reviewId = review.IReviewId,
+                        productName = review.IProduct?.SProductName ?? "N/A",
+                        reviewerName = review.IReviewer?.SFullName ?? "N/A",
+                        reviewerEmail = review.IReviewer?.SEmail ?? "N/A",
+                        rating = review.IRating ?? 0,
+                        comment = review.SComment ?? "",
+                        reviewTime = review.DtReviewTime?.ToString("dd/MM/yyyy HH:mm") ?? "N/A"
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteReview(int id)
+        {
+            if (!IsAdmin())
+                return Json(new { success = false, message = "Không có quyền" });
+
+            try
+            {
+                var review = _reviewRepo.GetById(id);
+                if (review == null)
+                    return Json(new { success = false, message = "Không tìm thấy đánh giá" });
+
+                _reviewRepo.Delete(id);
+
+                return Json(new { success = true, message = "Xóa đánh giá thành công" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi: " + ex.Message });
+            }
         }
     }
 }
