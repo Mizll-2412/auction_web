@@ -28,9 +28,12 @@ namespace BTL_LTWNC.Repositories
                 .ToListAsync();
         }
 
-        public async Task<TblReview> GetByIdAsync(int id)
+        public async Task<TblReview?> GetByIdAsync(int id)
         {
-            return await _context.TblReviews.FindAsync(id);
+            return await _context.TblReviews
+                .Include(r => r.IProduct)
+                .Include(r => r.IReviewer)
+                .FirstOrDefaultAsync(r => r.IReviewId == id);
         }
 
         public async Task AddAsync(TblReview entity)

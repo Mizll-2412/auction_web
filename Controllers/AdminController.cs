@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using BTL_LTWNC.Models;
 using BTL_LTWNC.Repositories;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BTL_LTWNC.Controllers
 {
@@ -41,17 +42,18 @@ namespace BTL_LTWNC.Controllers
         // =======================
         // DASHBOARD (Trang chủ Admin)
         // =======================
-        public IActionResult Dashboard()
+        public async Task<IActionResult> DashboardAsync()
         {
             var check = CheckLoginAndRole();
+
             if (check != null) return check;
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
-            
+
             // TODO: Thêm logic thống kê
             ViewBag.TotalUsers = _userRepo.GetMembers().Count();
-            ViewBag.TotalReviews = _reviewRepo.GetAll().Count();
-            
+            var reviews = await _reviewRepo.GetAllAsync();
+            ViewBag.TotalReviews = reviews.Count();
             return View();
         }
 
@@ -164,10 +166,10 @@ namespace BTL_LTWNC.Controllers
             if (check != null) return check;
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
-            
+
             // TODO: Lấy danh sách posts từ repository/dbcontext
             var posts = new List<object>(); // Tạm thời trả về empty
-            
+
             return View(posts);
         }
 
@@ -180,10 +182,10 @@ namespace BTL_LTWNC.Controllers
             if (check != null) return check;
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
-            
+
             // TODO: Lấy danh sách categories
             var categories = new List<object>();
-            
+
             return View(categories);
         }
 
@@ -196,10 +198,10 @@ namespace BTL_LTWNC.Controllers
             if (check != null) return check;
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
-            
+
             // TODO: Lấy danh sách products
             var products = new List<object>();
-            
+
             return View(products);
         }
 
@@ -212,21 +214,21 @@ namespace BTL_LTWNC.Controllers
             if (check != null) return check;
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
-            var reviews = _reviewRepo.GetAll();
-            
+            var reviews = _reviewRepo.GetAllAsync();
+
             return View(reviews);
         }
 
         [HttpGet]
-        public IActionResult GetReviewDetail(int id)
+        public async Task<IActionResult> GetReviewDetail(int id)
         {
             if (!IsAdmin())
                 return Json(new { success = false, message = "Không có quyền" });
 
             try
             {
-                var review = _reviewRepo.GetById(id);
-                
+                var review = await _reviewRepo.GetByIdAsync(id);
+
                 if (review == null)
                     return Json(new { success = false, message = "Không tìm thấy đánh giá" });
 
@@ -252,18 +254,18 @@ namespace BTL_LTWNC.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteReview(int id)
+        public async Task<IActionResult> DeleteReview(int id)
         {
             if (!IsAdmin())
                 return Json(new { success = false, message = "Không có quyền" });
 
             try
             {
-                var review = _reviewRepo.GetById(id);
+                var review = await _reviewRepo.GetByIdAsync(id);
                 if (review == null)
                     return Json(new { success = false, message = "Không tìm thấy đánh giá" });
 
-                _reviewRepo.Delete(id);
+                await _reviewRepo.DeleteAsync(id);
 
                 return Json(new { success = true, message = "Xóa đánh giá thành công" });
             }

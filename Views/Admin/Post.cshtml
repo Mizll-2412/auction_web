@@ -1,12 +1,12 @@
-@* @model IEnumerable<BTL_LTWNC.Models.TblPost>
+@model IEnumerable<BTL_LTWNC.Models.TblAuction>
 @{
-    ViewData["Title"] = "Quản lý bài đăng";
+    ViewData["Title"] = "Quản lý phiên đấu giá";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var role = ViewBag.Role;
 }
 
 <style>
-    .post-thumb {
+    .product-thumb {
         width: 50px;
         height: 50px;
         object-fit: cover;
@@ -43,72 +43,78 @@
         overflow-y: auto;
     }
 
-    .post-detail img {
+    .auction-detail img {
         max-width: 100%;
         border-radius: 10px;
+    }
+
+    .price-badge {
+        font-size: 16px;
+        font-weight: bold;
     }
 </style>
 
 <div class="top-bar">
-    <h1 class="page-title">Quản lý bài đăng</h1>
-    <p class="page-subtitle">Danh sách bài đăng và yêu cầu đăng bài</p>
+    <h1 class="page-title">Quản lý phiên đấu giá</h1>
+    <p class="page-subtitle">Danh sách các phiên đấu giá trong hệ thống</p>
 </div>
 
 <!-- Tabs -->
-<ul class="nav nav-tabs mb-3" id="postTabs" role="tablist">
+<ul class="nav nav-tabs mb-3" id="auctionTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button">
-            <i class="bi bi-list-ul"></i> Tất cả bài đăng (@Model.Count())
+            <i class="bi bi-list-ul"></i> Tất cả phiên đấu giá (@(Model?.Count() ?? 0))
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button">
-            <i class="bi bi-clock-history"></i> Chờ duyệt (@ViewBag.PendingCount)
-            @if (ViewBag.PendingCount > 0)
-            {
-                <span class="badge bg-warning ms-1">@ViewBag.PendingCount</span>
-            }
+        <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button">
+            <i class="bi bi-activity"></i> Đang diễn ra (@(Model?.Count(a => a.SStatus == "active") ?? 0))
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="ended-tab" data-bs-toggle="tab" data-bs-target="#ended" type="button">
+            <i class="bi bi-check-circle"></i> Đã kết thúc (@(Model?.Count(a => a.SStatus == "ended") ?? 0))
         </button>
     </li>
 </ul>
 
 <!-- Tab Content -->
-<div class="tab-content" id="postTabContent">
-    <!-- All Posts Tab -->
+<div class="tab-content" id="auctionTabContent">
+    <!-- All Auctions Tab -->
     <div class="tab-pane fade show active" id="all" role="tabpanel">
         <!-- Filter Section -->
         <div class="filter-section">
             <div class="filter-group">
                 <label>Tìm kiếm</label>
-                <input type="text" id="searchInput" placeholder="Tìm theo tiêu đề, tác giả..." 
-                       class="form-control" onkeyup="filterPosts()">
+                <input type="text" id="searchInput" placeholder="Tìm theo sản phẩm..." 
+                       class="form-control" onkeyup="filterAuctions()">
             </div>
             <div class="filter-group">
                 <label>Trạng thái</label>
-                <select id="statusFilter" onchange="filterPosts()">
+                <select id="statusFilter" onchange="filterAuctions()">
                     <option value="">Tất cả trạng thái</option>
-                    <option value="ongoing">Đang diễn ra</option>
-                    <option value="upcoming">Sắp diễn ra</option>
-                    <option value="future">Sẽ diễn ra</option>
+                    <option value="pending">Chờ bắt đầu</option>
+                    <option value="active">Đang diễn ra</option>
                     <option value="ended">Đã kết thúc</option>
+                    <option value="cancelled">Đã hủy</option>
                 </select>
             </div>
             <div class="filter-group">
-                <label>Danh mục</label>
-                <select id="categoryFilter" onchange="filterPosts()">
-                    <option value="">Tất cả danh mục</option>
-                    <option value="1">Đấu giá</option>
-                    <option value="2">Từ thiện</option>
-                    <option value="3">Sự kiện</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Ngày đăng</label>
-                <select id="dateFilter" onchange="filterPosts()">
+                <label>Thời gian</label>
+                <select id="timeFilter" onchange="filterAuctions()">
                     <option value="">Tất cả</option>
                     <option value="today">Hôm nay</option>
                     <option value="week">Tuần này</option>
                     <option value="month">Tháng này</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Sắp xếp</label>
+                <select id="sortFilter" onchange="sortAuctions()">
+                    <option value="newest">Mới nhất</option>
+                    <option value="ending_soon">Sắp kết thúc</option>
+                    <option value="highest_bid">Giá cao nhất</option>
+                    <option value="lowest_bid">Giá thấp nhất</option>
                 </select>
             </div>
             <div>
@@ -123,86 +129,136 @@
         <div class="actions-bar mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="text-muted">Hiển thị <strong id="showingCount">@Model.Count()</strong> bài đăng</span>
+                    <span class="text-muted">Hiển thị <strong id="showingCount">@(Model?.Count() ?? 0)</strong> phiên đấu giá</span>
                 </div>
                 <div>
-                    <button class="btn btn-success" onclick="openAddPostForm()">
-                        <i class="bi bi-plus-circle"></i> Thêm bài viết
+                    <button class="btn btn-success" onclick="openAddAuctionForm()">
+                        <i class="bi bi-plus-circle"></i> Tạo phiên đấu giá
                     </button>
-                    <button class="btn btn-primary" onclick="exportPosts()">
+                    <button class="btn btn-primary" onclick="exportAuctions()">
                         <i class="bi bi-download"></i> Xuất Excel
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Posts Table -->
+        <!-- Auctions Table -->
         <div class="data-table">
-            <table id="postsTable">
+            <table id="auctionsTable">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="selectAll"></th>
-                        <th onclick="sortTable(1)">ID <i class="bi bi-arrow-down-up"></i></th>
-                        <th onclick="sortTable(2)">Tiêu đề <i class="bi bi-arrow-down-up"></i></th>
-                        <th>Tác giả</th>
-                        <th>Danh mục</th>
-                        <th onclick="sortTable(5)">Ngày đăng <i class="bi bi-arrow-down-up"></i></th>
+                        <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                        <th>ID</th>
+                        <th>Sản phẩm</th>
+                        <th>Thời gian bắt đầu</th>
+                        <th>Thời gian kết thúc</th>
+                        <th>Giá cao nhất</th>
+                        <th>Người thắng</th>
                         <th>Trạng thái</th>
-                        <th>Lượt xem</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var post in Model)
+                    @if (Model != null && Model.Any())
                     {
-                        <tr id="post-row-@post.IPostId" data-status="@post.SStatus">
-                            <td><input type="checkbox" class="post-checkbox" value="@post.IPostId"></td>
-                            <td>@post.IPostId</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    @if (!string.IsNullOrEmpty(post.SImage))
+                        @foreach (var auction in Model)
+                        {
+                            <tr id="auction-row-@auction.IAuctionId" 
+                                data-status="@auction.SStatus"
+                                data-start="@auction.DtStartTime?.ToString("yyyy-MM-dd")"
+                                data-end="@auction.DtEndTime?.ToString("yyyy-MM-dd")">
+                                <td><input type="checkbox" class="auction-checkbox" value="@auction.IAuctionId"></td>
+                                <td>@auction.IAuctionId</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(auction.IProduct?.SImageUrl))
+                                        {
+                                            <img src="@auction.IProduct.SImageUrl" class="product-thumb me-2" alt="product">
+                                        }
+                                        else
+                                        {
+                                            <div class="product-thumb me-2 bg-secondary d-flex align-items-center justify-content-center text-white">
+                                                <i class="bi bi-image"></i>
+                                            </div>
+                                        }
+                                        <span>@(auction.IProduct?.SProductName ?? "Sản phẩm đã xóa")</span>
+                                    </div>
+                                </td>
+                                <td>@auction.DtStartTime?.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@auction.DtEndTime?.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <span class="price-badge text-success">
+                                        @((auction.DHighestBid ?? 0).ToString("#,##0")) ₫
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (auction.IWinner != null)
                                     {
-                                        <img src="@post.SImage" class="post-thumb me-2" alt="thumbnail">
+                                        <div>
+                                            <strong>@auction.IWinner.SFullName</strong>
+                                            <br>
+                                            <small class="text-muted">@auction.IWinner.SEmail</small>
+                                        </div>
                                     }
-                                    <span>@post.STitle</span>
-                                </div>
-                            </td>
-                            <td>@post.AuthorName</td>
-                            <td><span class="badge badge-info">@post.CategoryName</span></td>
-                            <td>@post.DCreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>
-                                @if (post.SStatus == "ongoing")
-                                {
-                                    <span class="badge bg-success">Đang diễn ra</span>
-                                }
-                                else if (post.SStatus == "upcoming")
-                                {
-                                    <span class="badge bg-warning">Sắp diễn ra</span>
-                                }
-                                else if (post.SStatus == "future")
-                                {
-                                    <span class="badge bg-info">Sẽ diễn ra</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">Đã kết thúc</span>
-                                }
-                            </td>
-                            <td>
-                                <i class="bi bi-eye"></i> @post.IViews
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-sm btn-info" onclick="viewPost(@post.IPostId)" title="Xem">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning" onclick="editPost(@post.IPostId)" title="Sửa">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deletePost(@post.IPostId)" title="Xóa">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa có</span>
+                                    }
+                                </td>
+                                <td>
+                                    @switch (auction.SStatus?.ToLower())
+                                    {
+                                        case "pending":
+                                            <span class="badge bg-warning">Chờ bắt đầu</span>
+                                            break;
+                                        case "active":
+                                            <span class="badge bg-success">Đang diễn ra</span>
+                                            break;
+                                        case "ended":
+                                            <span class="badge bg-secondary">Đã kết thúc</span>
+                                            break;
+                                        case "cancelled":
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@auction.SStatus</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-info" onclick="viewAuction(@auction.IAuctionId)" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        @if (auction.SStatus?.ToLower() != "ended")
+                                        {
+                                            <button class="btn btn-sm btn-warning" onclick="editAuction(@auction.IAuctionId)" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        }
+                                        @if (auction.SStatus?.ToLower() == "pending")
+                                        {
+                                            <button class="btn btn-sm btn-danger" onclick="cancelAuction(@auction.IAuctionId)" title="Hủy">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+                                        }
+                                        @if (auction.SStatus?.ToLower() == "active")
+                                        {
+                                            <button class="btn btn-sm btn-success" onclick="endAuction(@auction.IAuctionId)" title="Kết thúc">
+                                                <i class="bi bi-stop-circle"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center" style="padding: 40px;">
+                                <i class="bi bi-inbox fs-1 text-muted"></i>
+                                <p class="text-muted mt-2">Chưa có phiên đấu giá nào</p>
                             </td>
                         </tr>
                     }
@@ -211,196 +267,259 @@
         </div>
     </div>
 
-    <!-- Pending Approval Tab -->
-    <div class="tab-pane fade" id="pending" role="tabpanel">
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Có <strong>@ViewBag.PendingCount</strong> yêu cầu đăng bài đang chờ duyệt
+    <!-- Active Auctions Tab -->
+    <div class="tab-pane fade" id="active" role="tabpanel">
+        <div class="alert alert-success">
+            <i class="bi bi-activity"></i> Có <strong>@(Model?.Count(a => a.SStatus == "active") ?? 0)</strong> phiên đấu giá đang diễn ra
         </div>
-
         <div class="data-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Tiêu đề</th>
-                        <th>Tác giả</th>
-                        <th>Danh mục</th>
-                        <th>Ngày gửi</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var post in ViewBag.PendingPosts as IEnumerable<BTL_LTWNC.Models.TblAuction>)
-                    {
-                        <tr id="pending-post-@post.">
-                            <td>@post.IPostId</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    @if (!string.IsNullOrEmpty(post.SImage))
-                                    {
-                                        <img src="@post.SImage" class="post-thumb me-2" alt="thumbnail">
-                                    }
-                                    <div>
-                                        <strong>@post.STitle</strong>
-                                        <br>
-                                        <small class="text-muted">@post.SDescription?.Substring(0, Math.Min(50, post.SDescription.Length))...</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    <strong>@post.AuthorName</strong>
-                                    <br>
-                                    <small class="text-muted">@post.AuthorEmail</small>
-                                </div>
-                            </td>
-                            <td><span class="badge badge-info">@post.CategoryName</span></td>
-                            <td>@post.DCreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td><span class="badge bg-warning">Chờ duyệt</span></td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-sm btn-info" onclick="viewPendingPost(@post.IPostId)" title="Xem chi tiết">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-success" onclick="approvePost(@post.IPostId)" title="Duyệt">
-                                        <i class="bi bi-check-circle"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="rejectPost(@post.IPostId)" title="Từ chối">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <!-- Same table structure, filtered by active status -->
+            <p class="text-muted text-center">Hiển thị các phiên đấu giá đang hoạt động...</p>
+        </div>
+    </div>
+
+    <!-- Ended Auctions Tab -->
+    <div class="tab-pane fade" id="ended" role="tabpanel">
+        <div class="alert alert-info">
+            <i class="bi bi-check-circle"></i> Có <strong>@(Model?.Count(a => a.SStatus == "ended") ?? 0)</strong> phiên đấu giá đã kết thúc
+        </div>
+        <div class="data-table">
+            <!-- Same table structure, filtered by ended status -->
+            <p class="text-muted text-center">Hiển thị các phiên đấu giá đã kết thúc...</p>
         </div>
     </div>
 </div>
 
-<!-- Post Detail Modal -->
-<div id="postDetailModal" class="modal">
+<!-- Auction Detail Modal -->
+<div id="auctionDetailModal" class="modal">
     <div class="modal-content modal-lg">
         <div class="modal-header">
-            <h3>Chi tiết bài đăng</h3>
-            <button class="close-btn" onclick="closePostDetailModal()">&times;</button>
+            <h3>Chi tiết phiên đấu giá</h3>
+            <button class="close-btn" onclick="closeAuctionDetailModal()">&times;</button>
         </div>
-        <div id="postDetailContent" class="modal-body">
+        <div id="auctionDetailContent" class="modal-body">
             <!-- Content loaded via AJAX -->
         </div>
     </div>
 </div>
 
-<!-- Approval Modal -->
-<div id="approvalModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Duyệt bài đăng</h3>
-            <button class="close-btn" onclick="closeApprovalModal()">&times;</button>
-        </div>
-        <form id="approvalForm" onsubmit="event.preventDefault(); submitApproval();">
-            <input type="hidden" id="approvalPostId">
-            <div class="form-group">
-                <label>Quyết định *</label>
-                <select id="approvalDecision" class="form-control" required>
-                    <option value="approve">Duyệt bài đăng</option>
-                    <option value="reject">Từ chối</option>
-                </select>
-            </div>
-            <div class="form-group" id="reasonGroup" style="display: none;">
-                <label>Lý do từ chối *</label>
-                <textarea id="rejectionReason" class="form-control" rows="4" 
-                          placeholder="Nhập lý do từ chối..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Ghi chú</label>
-                <textarea id="approvalNote" class="form-control" rows="3" 
-                          placeholder="Ghi chú thêm (tùy chọn)..."></textarea>
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeApprovalModal()">Hủy</button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> Xác nhận
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
 @section Scripts {
-    <script src="~/js/admin-posts.js"></script>
     <script>
-        // Toggle rejection reason field
-        document.getElementById('approvalDecision').addEventListener('change', function() {
-            const reasonGroup = document.getElementById('reasonGroup');
-            if (this.value === 'reject') {
-                reasonGroup.style.display = 'block';
-                document.getElementById('rejectionReason').required = true;
-            } else {
-                reasonGroup.style.display = 'none';
-                document.getElementById('rejectionReason').required = false;
-            }
-        });
-
-        function approvePost(postId) {
-            document.getElementById('approvalPostId').value = postId;
-            document.getElementById('approvalDecision').value = 'approve';
-            document.getElementById('reasonGroup').style.display = 'none';
-            document.getElementById('approvalModal').style.display = 'block';
+        function filterAuctions() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const timeFilter = document.getElementById('timeFilter').value;
+            
+            const rows = document.querySelectorAll('#auctionsTable tbody tr');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                if (row.cells.length < 9) return; // Skip empty row
+                
+                const productName = row.cells[2].textContent.toLowerCase();
+                const status = row.getAttribute('data-status')?.toLowerCase() || '';
+                const startDate = row.getAttribute('data-start');
+                
+                let showRow = true;
+                
+                // Search filter
+                if (searchInput && !productName.includes(searchInput)) {
+                    showRow = false;
+                }
+                
+                // Status filter
+                if (statusFilter && status !== statusFilter) {
+                    showRow = false;
+                }
+                
+                // Time filter
+                if (timeFilter && startDate) {
+                    const auctionDate = new Date(startDate);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    switch(timeFilter) {
+                        case 'today':
+                            if (auctionDate.toDateString() !== today.toDateString()) showRow = false;
+                            break;
+                        case 'week':
+                            const weekAgo = new Date(today);
+                            weekAgo.setDate(weekAgo.getDate() - 7);
+                            if (auctionDate < weekAgo) showRow = false;
+                            break;
+                        case 'month':
+                            const monthAgo = new Date(today);
+                            monthAgo.setMonth(monthAgo.getMonth() - 1);
+                            if (auctionDate < monthAgo) showRow = false;
+                            break;
+                    }
+                }
+                
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
+            });
+            
+            document.getElementById('showingCount').textContent = visibleCount;
         }
 
-        function rejectPost(postId) {
-            document.getElementById('approvalPostId').value = postId;
-            document.getElementById('approvalDecision').value = 'reject';
-            document.getElementById('reasonGroup').style.display = 'block';
-            document.getElementById('approvalModal').style.display = 'block';
-        }
-
-        function submitApproval() {
-            const postId = document.getElementById('approvalPostId').value;
-            const decision = document.getElementById('approvalDecision').value;
-            const reason = document.getElementById('rejectionReason').value;
-            const note = document.getElementById('approvalNote').value;
-
-            fetch('/Admin/ApprovePost', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ postId, decision, reason, note })
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    alert(decision === 'approve' ? 'Đã duyệt bài đăng!' : 'Đã từ chối bài đăng!');
-                    location.reload();
-                } else {
-                    alert('Lỗi: ' + result.message);
+        function sortAuctions() {
+            const sortValue = document.getElementById('sortFilter').value;
+            const tbody = document.querySelector('#auctionsTable tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.cells.length >= 9);
+            
+            rows.sort((a, b) => {
+                switch(sortValue) {
+                    case 'newest':
+                        const dateA = new Date(a.getAttribute('data-start') || 0);
+                        const dateB = new Date(b.getAttribute('data-start') || 0);
+                        return dateB - dateA;
+                    case 'ending_soon':
+                        const endA = new Date(a.getAttribute('data-end') || 0);
+                        const endB = new Date(b.getAttribute('data-end') || 0);
+                        return endA - endB;
+                    case 'highest_bid':
+                        const bidA = parseFloat(a.cells[5].textContent.replace(/[^\d]/g, '') || 0);
+                        const bidB = parseFloat(b.cells[5].textContent.replace(/[^\d]/g, '') || 0);
+                        return bidB - bidA;
+                    case 'lowest_bid':
+                        const bidA2 = parseFloat(a.cells[5].textContent.replace(/[^\d]/g, '') || 0);
+                        const bidB2 = parseFloat(b.cells[5].textContent.replace(/[^\d]/g, '') || 0);
+                        return bidA2 - bidB2;
+                    default:
+                        return 0;
                 }
             });
+            
+            rows.forEach(row => tbody.appendChild(row));
         }
 
-        function closeApprovalModal() {
-            document.getElementById('approvalModal').style.display = 'none';
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('timeFilter').value = '';
+            document.getElementById('sortFilter').value = 'newest';
+            filterAuctions();
         }
 
-        function viewPendingPost(postId) {
-            fetch(`/Admin/GetPostDetail?postId=${postId}`)
+        function viewAuction(auctionId) {
+            fetch(`/Admin/GetAuctionDetail?id=${auctionId}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('postDetailContent').innerHTML = `
-                        <div class="post-detail">
-                            <h4>${data.title}</h4>
-                            <p class="text-muted">Tác giả: ${data.authorName} | ${data.createdAt}</p>
-                            <img src="${data.image}" class="img-fluid mb-3" />
-                            <div>${data.content}</div>
-                        </div>
-                    `;
-                    document.getElementById('postDetailModal').style.display = 'block';
-                });
+                    if (data.success) {
+                        document.getElementById('auctionDetailContent').innerHTML = `
+                            <div class="auction-detail">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img src="${data.auction.productImage}" class="img-fluid" alt="product">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4>${data.auction.productName}</h4>
+                                        <p class="text-muted">${data.auction.productDescription || ''}</p>
+                                        <hr>
+                                        <p><strong>Thời gian bắt đầu:</strong> ${data.auction.startTime}</p>
+                                        <p><strong>Thời gian kết thúc:</strong> ${data.auction.endTime}</p>
+                                        <p><strong>Giá cao nhất:</strong> <span class="text-success fs-4">${data.auction.highestBid} ₫</span></p>
+                                        <p><strong>Người thắng:</strong> ${data.auction.winnerName || 'Chưa có'}</p>
+                                        <p><strong>Trạng thái:</strong> ${getStatusBadge(data.auction.status)}</p>
+                                        <p><strong>Số lượt đấu giá:</strong> ${data.auction.bidCount}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('auctionDetailModal').style.display = 'block';
+                    } else {
+                        alert('Không thể lấy thông tin phiên đấu giá');
+                    }
+                })
+                .catch(() => alert('Đã xảy ra lỗi'));
         }
 
-        function closePostDetailModal() {
-            document.getElementById('postDetailModal').style.display = 'none';
+        function getStatusBadge(status) {
+            const badges = {
+                'pending': '<span class="badge bg-warning">Chờ bắt đầu</span>',
+                'active': '<span class="badge bg-success">Đang diễn ra</span>',
+                'ended': '<span class="badge bg-secondary">Đã kết thúc</span>',
+                'cancelled': '<span class="badge bg-danger">Đã hủy</span>'
+            };
+            return badges[status?.toLowerCase()] || '<span class="badge bg-secondary">' + status + '</span>';
         }
+
+        function editAuction(id) {
+            window.location.href = `/Admin/EditAuction?id=${id}`;
+        }
+
+        function cancelAuction(id) {
+            if (confirm('Bạn có chắc chắn muốn hủy phiên đấu giá này?')) {
+                fetch(`/Admin/CancelAuction?id=${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Đã hủy phiên đấu giá');
+                        location.reload();
+                    } else {
+                        alert('Lỗi: ' + result.message);
+                    }
+                });
+            }
+        }
+
+        function endAuction(id) {
+            if (confirm('Bạn có chắc chắn muốn kết thúc phiên đấu giá này ngay?')) {
+                fetch(`/Admin/EndAuction?id=${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Đã kết thúc phiên đấu giá');
+                        location.reload();
+                    } else {
+                        alert('Lỗi: ' + result.message);
+                    }
+                });
+            }
+        }
+
+        function openAddAuctionForm() {
+            window.location.href = '/Admin/CreateAuction';
+        }
+
+        function exportAuctions() {
+            const selected = Array.from(document.querySelectorAll('.auction-checkbox:checked'))
+                .map(cb => cb.value);
+            
+            if (selected.length > 0) {
+                window.location.href = `/Admin/ExportAuctions?ids=${selected.join(',')}`;
+            } else {
+                window.location.href = '/Admin/ExportAuctions';
+            }
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.auction-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        }
+
+        function closeAuctionDetailModal() {
+            document.getElementById('auctionDetailModal').style.display = 'none';
+        }
+
+        // Close modal events
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAuctionDetailModal();
+            }
+        });
     </script>
-} *@
+}
