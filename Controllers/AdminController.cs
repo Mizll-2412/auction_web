@@ -4,6 +4,7 @@ using BTL_LTWNC.Models;
 using BTL_LTWNC.Repositories;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace BTL_LTWNC.Controllers
 {
@@ -11,9 +12,11 @@ namespace BTL_LTWNC.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly IReviewRepository _reviewRepo;
+        private readonly DbBtlLtwncContext _dbBtlLtwncContext;
 
-        public AdminController(IUserRepository userRepo, IReviewRepository reviewRepository)
+        public AdminController(DbBtlLtwncContext dbBtlLtwncContext, IUserRepository userRepo, IReviewRepository reviewRepository)
         {
+            _dbBtlLtwncContext = dbBtlLtwncContext;
             _userRepo = userRepo;
             _reviewRepo = reviewRepository;
         }
@@ -160,17 +163,29 @@ namespace BTL_LTWNC.Controllers
         // =======================
         // POSTS MANAGEMENT
         // =======================
-        public IActionResult Posts()
+        public async Task<IActionResult> Posts()
         {
             var check = CheckLoginAndRole();
             if (check != null) return check;
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
 
-            // TODO: Lấy danh sách posts từ repository/dbcontext
-            var posts = new List<object>(); // Tạm thời trả về empty
+            try
+            {
+                var auctions = _dbBtlLtwncContext.TblAuctions
+                    .Include(a => a.IProduct)
+                    .Include(a => a.IWinner)
+                    .OrderByDescending(a => a.DtStartTime)
+                    .ToList();
 
-            return View(posts);
+                return View(auctions);
+            }
+            catch (Exception ex)
+            {
+                // Log error nếu cần
+                ViewBag.ErrorMessage = "Lỗi khi tải danh sách phiên đấu giá: " + ex.Message;
+                return View(new List<TblAuction>()); // Trả về empty list nếu lỗi
+            }
         }
 
         // =======================
