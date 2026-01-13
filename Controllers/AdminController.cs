@@ -191,6 +191,9 @@ namespace BTL_LTWNC.Controllers
         // =======================
         // CATEGORIES MANAGEMENT
         // =======================
+        // // =======================
+        // CATEGORIES MANAGEMENT
+        // =======================
         public IActionResult Categories()
         {
             var check = CheckLoginAndRole();
@@ -198,10 +201,21 @@ namespace BTL_LTWNC.Controllers
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
 
-            // TODO: Lấy danh sách categories
-            var categories = new List<object>();
+            try
+            {
+                // Lấy danh sách categories từ database
+                var categories = _dbBtlLtwncContext.TblCategories
+                    .Include(c => c.TblProducts) // Nếu cần thông tin products
+                    .OrderBy(c => c.SCategoryName)
+                    .ToList();
 
-            return View(categories);
+                return View(categories);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Lỗi khi tải danh sách danh mục: " + ex.Message;
+                return View(new List<TblCategory>()); // Trả về empty list kiểu TblCategory
+            }
         }
 
         // =======================
