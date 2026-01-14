@@ -36,16 +36,12 @@ public partial class TblUser
     [RegularExpression(@"^\d{5}[0-9]$", ErrorMessage = "VerifyKey phải kết thúc bằng một chữ số.")]
     public string VerifyKey { get; set; }
 
+    [InverseProperty(nameof(TblAuction.IWinner))]
     public virtual ICollection<TblAuction> TblAuctions { get; set; } = new List<TblAuction>();
-
     public virtual ICollection<TblBid> TblBids { get; set; } = new List<TblBid>();
-
     public virtual ICollection<TblProduct> TblProducts { get; set; } = new List<TblProduct>();
-
     public virtual ICollection<TblReview> TblReviews { get; set; } = new List<TblReview>();
-
     public virtual ICollection<TblTransaction> TblTransactions { get; set; } = new List<TblTransaction>();
-
     public virtual ICollection<TblWatchlist> TblWatchlists { get; set; } = new List<TblWatchlist>();
     public virtual ICollection<TblNotification> TblNotificationsReceived { get; set; } = new List<TblNotification>();  
     public virtual ICollection<TblNotification> TblNotificationsSent  { get; set; } = new List<TblNotification>(); 

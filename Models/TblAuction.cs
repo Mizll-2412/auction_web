@@ -38,7 +38,6 @@ public partial class TblAuction
 
     public virtual ICollection<TblBid> TblBids { get; set; } = new List<TblBid>();
 
-    public virtual ICollection<TblWatchlist> TblWatchlists { get; set; } = new List<TblWatchlist>();
     public virtual ICollection<TblTransaction> TblTransactions { get; set; } = new List<TblTransaction>();
     public virtual ICollection<TblNotification> TblNotifications { get; set; } = new List<TblNotification>();
 

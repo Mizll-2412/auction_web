@@ -87,13 +87,13 @@ public class UserRepository : IUserRepository
         {
             // Tìm tài khoản người dùng trong TblUser theo IUserId
             var user = _context.TblUsers
-                .Include(u => u.TblAuctions)    // Nếu cần, có thể include các quan hệ liên quan
+                .Include(u => u.TblAuctions) 
                 .Include(u => u.TblBids)
                 .Include(u => u.TblProducts)
                 .Include(u => u.TblReviews)
                 .Include(u => u.TblTransactions)
                 .Include(u => u.TblWatchlists)
-                .FirstOrDefault(u => u.IUserId == userId); // Tìm người dùng đầu tiên với userId trùng khớp
+                .FirstOrDefault(u => u.IUserId == userId); 
 
             return user;
         }
