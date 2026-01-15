@@ -237,14 +237,14 @@ namespace BTL_LTWNC.Controllers
         // =======================
         // REVIEWS MANAGEMENT
         // =======================
-        public IActionResult Reviews()
+        public async Task<IActionResult> Reviews()
         {
             var check = CheckLoginAndRole();
             if (check != null) return check;
 
             ViewBag.Role = HttpContext.Session.GetString("Role");
-            var reviews = _reviewRepo.GetAllAsync();
 
+            var reviews = await _reviewRepo.GetAllAsync();
             return View(reviews);
         }
 
